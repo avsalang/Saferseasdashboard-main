@@ -21,8 +21,9 @@
 
   1. Push this project to GitHub
   2. In the repository settings, open `Pages`
-  3. Set the source to deploy your built static files
-  4. Share the published URL with your peers
+  3. Set `Source` to `GitHub Actions`
+  4. Push to `main` and wait for the `Deploy To GitHub Pages` workflow to finish
+  5. Share the published URL with your peers
 
   The landing page will open at the site root, and internal screens will use URLs like `#/dashboard`.
   
