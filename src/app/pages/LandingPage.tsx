@@ -37,35 +37,44 @@ export function LandingPage() {
   return (
     <div className="min-h-full">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-cyan-900 text-white py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center space-y-6">
-            <h1 className="text-5xl tracking-tight">
+      <section
+        className="relative overflow-hidden text-white px-6 py-24 md:py-32"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(8, 34, 94, 0.76), rgba(10, 57, 102, 0.72)), url('https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1800&q=80')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-950/35 via-blue-900/15 to-cyan-950/35" />
+        <div className="relative max-w-6xl mx-auto">
+          <div className="text-center space-y-6 md:space-y-7">
+            <h1 className="text-4xl md:text-6xl tracking-tight font-semibold">
               SAFERSEAS
             </h1>
-            <p className="text-xl text-cyan-100 max-w-4xl mx-auto">
+            <p className="text-base md:text-xl text-cyan-100/95 max-w-4xl mx-auto leading-relaxed">
               System for Analysis, Forensics, Evaluation, and Reporting for Incidents at Sea
             </p>
-            <p className="text-2xl text-blue-100 max-w-3xl mx-auto">
+            <p className="text-2xl md:text-4xl text-blue-50 max-w-4xl mx-auto leading-tight font-medium">
               Standardized Maritime Incident Reporting and Analytics Platform
             </p>
-            <p className="text-lg text-blue-200 max-w-2xl mx-auto">
+            <p className="text-base md:text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
               A comprehensive government platform for maritime safety data collection, analysis, and policy development
             </p>
             
-            <div className="flex gap-4 justify-center pt-6">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
               <Link to="/submit-incident">
-                <Button size="lg" className="bg-cyan-500 hover:bg-cyan-600 text-white px-8">
+                <Button size="lg" className="bg-cyan-500 hover:bg-cyan-600 text-white px-8 min-w-56">
                   Submit Incident Report
                 </Button>
               </Link>
               <Link to="/dashboard">
-                <Button size="lg" variant="outline" className="border-white bg-transparent text-white hover:bg-white/10 hover:text-white px-8">
+                <Button size="lg" variant="outline" className="border-white/80 bg-white/5 text-white hover:bg-white/15 hover:text-white px-8 min-w-44 shadow-sm backdrop-blur-sm">
                   View Dashboard
                 </Button>
               </Link>
               <Link to="/incident-explorer">
-                <Button size="lg" variant="outline" className="border-white bg-transparent text-white hover:bg-white/10 hover:text-white px-8">
+                <Button size="lg" variant="outline" className="border-white/80 bg-white/5 text-white hover:bg-white/15 hover:text-white px-8 min-w-52 shadow-sm backdrop-blur-sm">
                   Access Data Explorer
                 </Button>
               </Link>
