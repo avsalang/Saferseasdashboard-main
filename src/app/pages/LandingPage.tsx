@@ -43,6 +43,9 @@ export function LandingPage() {
             <h1 className="text-5xl tracking-tight">
               SAFERSEAS
             </h1>
+            <p className="text-xl text-cyan-100 max-w-4xl mx-auto">
+              System for Analysis, Forensics, Evaluation, and Reporting for Incidents at Sea
+            </p>
             <p className="text-2xl text-blue-100 max-w-3xl mx-auto">
               Standardized Maritime Incident Reporting and Analytics Platform
             </p>
@@ -57,12 +60,12 @@ export function LandingPage() {
                 </Button>
               </Link>
               <Link to="/dashboard">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8">
+                <Button size="lg" variant="outline" className="border-white bg-transparent text-white hover:bg-white/10 hover:text-white px-8">
                   View Dashboard
                 </Button>
               </Link>
               <Link to="/incident-explorer">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8">
+                <Button size="lg" variant="outline" className="border-white bg-transparent text-white hover:bg-white/10 hover:text-white px-8">
                   Access Data Explorer
                 </Button>
               </Link>
@@ -195,7 +198,7 @@ export function LandingPage() {
               </Button>
             </Link>
             <Link to="/training">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8">
+              <Button size="lg" variant="outline" className="border-white bg-transparent text-white hover:bg-white/10 hover:text-white px-8">
                 View Training
               </Button>
             </Link>
