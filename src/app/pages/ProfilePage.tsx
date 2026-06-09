@@ -5,7 +5,6 @@ import { Label } from "../components/ui/label";
 import { Avatar, AvatarFallback } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { User, Mail, Building, Shield, Activity, Bell } from "lucide-react";
 import { Switch } from "../components/ui/switch";
 
 export function ProfilePage() {

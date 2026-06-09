@@ -1,42 +1,39 @@
 import { Link } from "react-router";
-import { FileText, Database, BarChart3, Share2, Shield, Map, Users, TrendingUp } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { analyticsSummary, dataCompleteness } from "../data/incidentInsights";
+
+const routeDetailsMetric = dataCompleteness.find((metric) => metric.label === "Voyage and route details");
 
 export function LandingPage() {
   const features = [
     {
-      icon: FileText,
-      title: "Incident Reporting",
-      description: "Standardized intake forms for comprehensive maritime incident documentation with 9-step wizard."
+      title: "Structured Incident Reporting",
+      description: "Nine-step intake flow for recording incident, vessel, voyage, impact, and supporting document details.",
     },
     {
-      icon: Database,
-      title: "Data Standardization & Integration",
-      description: "Cross-agency data synchronization ensuring consistency across MARINA, PCG, and other maritime authorities."
+      title: "Record Review",
+      description: "Searchable incident records with standardized fields for follow-up review and case comparison.",
     },
     {
-      icon: BarChart3,
-      title: "Analytical Processing",
-      description: "Advanced analytics for trend identification, risk assessment, and pattern recognition in maritime safety."
+      title: "Summary Analytics",
+      description: "Descriptive charts for time, type, severity, location, and field-completeness trends.",
     },
     {
-      icon: Share2,
-      title: "Information Dissemination",
-      description: "Real-time policy alerts, safety bulletins, and insights distributed to stakeholders and vessel operators."
-    }
+      title: "Policy Review Support",
+      description: "Working review notes that stay tied to the data currently captured in the mockup.",
+    },
   ];
 
   const stats = [
-    { label: "Total Incidents Reported", value: "2,547", icon: FileText },
-    { label: "Active Vessels Tracked", value: "15,234", icon: Map },
-    { label: "Safety Recommendations", value: "892", icon: Shield },
-    { label: "Agency Collaborations", value: "12", icon: Users }
+    { label: "Incident Records", value: analyticsSummary.totalIncidents },
+    { label: "Reporting Authorities", value: analyticsSummary.authoritiesRepresented },
+    { label: "Route Details Captured", value: `${routeDetailsMetric?.percentage ?? 0}%` },
+    { label: "Linked Evidence Coverage", value: `${analyticsSummary.linkedEvidenceCoverage}%` },
   ];
 
   return (
     <div className="min-h-full">
-      {/* Hero Section */}
       <section
         className="relative overflow-hidden text-white px-6 py-24 md:py-32"
         style={{
@@ -59,9 +56,9 @@ export function LandingPage() {
               Standardized Maritime Incident Reporting and Analytics Platform
             </p>
             <p className="text-base md:text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
-              A comprehensive government platform for maritime safety data collection, analysis, and policy development
+              A government platform for structured incident reporting, historical review, and analytics
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
               <Link to="/submit-incident">
                 <Button size="lg" className="bg-cyan-500 hover:bg-cyan-600 text-white px-8 min-w-56">
@@ -83,74 +80,56 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Stats Section */}
       <section className="py-12 bg-white border-b">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-4 gap-8">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <div key={index} className="text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mb-3">
-                    <Icon className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div className="text-3xl text-blue-900 mb-1">{stat.value}</div>
-                  <div className="text-sm text-slate-600">{stat.label}</div>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-3xl text-blue-900 mb-1">{stat.value}</div>
+                <div className="text-sm text-slate-600">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
       <section className="py-16 px-6 bg-slate-50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl text-slate-900 mb-3">Platform Features</h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Comprehensive tools for maritime incident management and safety analysis
+              Core workflows for incident intake, record review, mapping, and analysis
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <Card key={index} className="border-slate-200 hover:border-blue-300 transition-colors">
-                  <CardHeader>
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <Icon className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <CardTitle className="text-xl">{feature.title}</CardTitle>
-                    </div>
-                    <CardDescription className="text-base">{feature.description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              );
-            })}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {features.map((feature) => (
+              <Card key={feature.title} className="border-slate-200 hover:border-blue-300 transition-colors">
+                <CardHeader>
+                  <CardTitle className="text-xl">{feature.title}</CardTitle>
+                  <CardDescription className="text-base">{feature.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Capabilities Section */}
       <section className="py-16 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl text-slate-900 mb-3">Key Capabilities</h2>
+            <h2 className="text-3xl text-slate-900 mb-3">Current Capabilities</h2>
             <p className="text-lg text-slate-600">
-              Advanced tools for maritime safety professionals
+              Tools for reporting, reviewing, and analyzing maritime incident records
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card>
               <CardHeader>
-                <Map className="w-8 h-8 text-blue-600 mb-3" />
                 <CardTitle>GIS Mapping</CardTitle>
                 <CardDescription>
-                  Interactive incident mapping with heatmaps, clustering, and geographic analysis
+                  Coordinate-based map review with density, clusters, and individual incident points.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -162,10 +141,9 @@ export function LandingPage() {
 
             <Card>
               <CardHeader>
-                <TrendingUp className="w-8 h-8 text-blue-600 mb-3" />
-                <CardTitle>Analytics Dashboard</CardTitle>
+                <CardTitle>Analytics Overview</CardTitle>
                 <CardDescription>
-                  Real-time visualizations of incident trends, vessel analytics, and risk factors
+                  Descriptive summaries for time, type, severity, province, and capture completeness.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -177,15 +155,14 @@ export function LandingPage() {
 
             <Card>
               <CardHeader>
-                <Shield className="w-8 h-8 text-blue-600 mb-3" />
-                <CardTitle>Policy Insights</CardTitle>
+                <CardTitle>Policy Review</CardTitle>
                 <CardDescription>
-                  Data-driven policy recommendations and safety improvement initiatives
+                  Structured review priorities and supporting record summaries.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Link to="/policy-insights">
-                  <Button variant="outline" className="w-full">Access Insights</Button>
+                  <Button variant="outline" className="w-full">Open Notes</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -193,12 +170,11 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-16 px-6 bg-gradient-to-br from-blue-900 to-blue-800 text-white">
         <div className="max-w-4xl mx-auto text-center space-y-6">
-          <h2 className="text-3xl">Ready to improve maritime safety?</h2>
+          <h2 className="text-3xl">Ready to review the mockup?</h2>
           <p className="text-xl text-blue-100">
-            Join MARINA, PCG, and other agencies in creating a safer maritime environment
+            Explore how standardized incident records can support review, mapping, and descriptive analysis
           </p>
           <div className="flex gap-4 justify-center pt-4">
             <Link to="/submit-incident">
@@ -206,9 +182,9 @@ export function LandingPage() {
                 Get Started
               </Button>
             </Link>
-            <Link to="/training">
+            <Link to="/policy-insights">
               <Button size="lg" variant="outline" className="border-white bg-transparent text-white hover:bg-white/10 hover:text-white px-8">
-                View Training
+                View Review Notes
               </Button>
             </Link>
           </div>

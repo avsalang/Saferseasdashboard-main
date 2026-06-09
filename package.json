@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "test": "node --test --experimental-strip-types src/app/analytics/*.test.ts"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
@@ -47,6 +48,8 @@
     "embla-carousel-react": "8.6.0",
     "input-otp": "1.4.2",
     "leaflet": "^1.9.4",
+    "leaflet.heat": "^0.2.0",
+    "leaflet.markercluster": "^1.5.3",
     "lucide-react": "0.487.0",
     "motion": "12.23.24",
     "next-themes": "0.4.6",

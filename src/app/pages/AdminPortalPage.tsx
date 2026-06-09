@@ -28,7 +28,7 @@ export function AdminPortalPage() {
     { category: "Incident Type", values: ["Collision", "Grounding", "Sinking", "Fire/Explosion", "Capsizing"], count: 5 },
     { category: "Vessel Type", values: ["Ferry", "Cargo", "Tanker", "Fishing", "Passenger"], count: 5 },
     { category: "Severity", values: ["Very Serious", "Serious", "Less Serious", "Near Miss"], count: 4 },
-    { category: "Casualty Type", values: ["Fatality", "Injury", "Pollution", "Property Damage", "None"], count: 5 },
+    { category: "Impact Type", values: ["Fatality", "Injury", "Pollution", "Property Damage", "None"], count: 5 },
   ];
 
   return (
