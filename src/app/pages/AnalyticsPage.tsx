@@ -23,11 +23,9 @@ import {
   ANALYTICS_CAVEAT,
   analyticsRecords,
   buildCausePareto,
-  buildDataCompletenessHeatmap,
   buildIncidentTypePareto,
   buildKpiSummary,
   buildProvinceBurden,
-  buildReviewPipeline,
   buildRouteBurden,
   buildTypeSeverityHeatmap,
   buildWeatherSeverityHeatmap,
@@ -47,15 +45,6 @@ const seriesColors = {
   incidents: "#1d4ed8",
   fatalities: "#991b1b",
   injuries: "#f97316",
-};
-
-const statusColors: Record<string, string> = {
-  Submitted: "#94a3b8",
-  "Under Review": "#f59e0b",
-  Verified: "#0ea5e9",
-  Published: "#16a34a",
-  Returned: "#ef4444",
-  Unknown: "#64748b",
 };
 
 function downloadFile(filename: string, content: string, type: string) {
@@ -155,11 +144,8 @@ export function AnalyticsPage() {
   const routeBurden = useMemo(() => buildRouteBurden(filteredRecords), [filteredRecords]);
   const weatherSeverityHeatmap = useMemo(() => buildWeatherSeverityHeatmap(filteredRecords), [filteredRecords]);
   const causePareto = useMemo(() => buildCausePareto(filteredRecords), [filteredRecords]);
-  const dataCompletenessHeatmap = useMemo(() => buildDataCompletenessHeatmap(filteredRecords), [filteredRecords]);
-  const reviewPipeline = useMemo(() => buildReviewPipeline(filteredRecords), [filteredRecords]);
 
   const typeSeverityColumns = typeSeverityHeatmap[0]?.cells.map((cell) => cell.key) ?? [];
-  const completenessColumns = dataCompletenessHeatmap[0]?.cells.map((cell) => cell.key) ?? [];
   const weatherColumns = weatherSeverityHeatmap[0]?.cells.map((cell) => cell.key) ?? [];
   const incidentTypeKeys = useMemo(() => {
     const counts = filteredRecords.reduce((map, record) => {
@@ -302,9 +288,6 @@ export function AnalyticsPage() {
             </TabsTrigger>
             <TabsTrigger value="conditions-causes" className="flex-none px-4 py-2">
               Conditions & Causes
-            </TabsTrigger>
-            <TabsTrigger value="quality" className="flex-none px-4 py-2">
-              Data Quality
             </TabsTrigger>
           </TabsList>
 
@@ -674,103 +657,6 @@ export function AnalyticsPage() {
           </div>
           </TabsContent>
 
-          <TabsContent value="quality" className="space-y-6">
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-            <Card id="data-completeness">
-              <CardHeader>
-                <CardTitle>Data Completeness Heatmap</CardTitle>
-                <CardDescription>
-                  Completion percentage by field group and reporting authority
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <HeatmapGrid
-                  columns={completenessColumns}
-                  rows={dataCompletenessHeatmap}
-                  valueLabel="complete"
-                  palette="blue"
-                  onCellClick={(fieldGroup, authority) => {
-                    openExplorer(
-                      filteredRecords.filter((record) => record.reportingAuthority === authority),
-                      `Analytics · ${fieldGroup} completeness for ${authority}`,
-                      { authority },
-                    );
-                  }}
-                />
-              </CardContent>
-            </Card>
-
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-            <Card id="review-pipeline">
-              <CardHeader>
-                <CardTitle>Review Pipeline</CardTitle>
-                <CardDescription>
-                  Current review status of the filtered records
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex h-5 overflow-hidden rounded-full bg-slate-200">
-                  {reviewPipeline.map((entry) => (
-                    <div
-                      key={entry.status}
-                      className="flex items-center justify-center text-[11px] text-white"
-                      style={{
-                        width: `${entry.percentage}%`,
-                        backgroundColor: statusColors[entry.status] ?? statusColors.Unknown,
-                      }}
-                      title={`${entry.status}: ${entry.count}`}
-                    >
-                      {entry.percentage >= 10 ? `${entry.percentage}%` : ""}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                  {reviewPipeline.map((entry) => (
-                    <button
-                      key={entry.status}
-                      type="button"
-                      className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-left hover:border-blue-300"
-                      onClick={() =>
-                        openExplorer(
-                          filteredRecords.filter((record) => record.reviewStatus === entry.status),
-                          `Analytics · ${entry.status} review status`,
-                          { status: entry.status },
-                        )
-                      }
-                    >
-                      <div className="text-sm text-slate-900">{entry.status}</div>
-                      <div className="text-2xl text-slate-900">{entry.count}</div>
-                      <div className="text-xs text-slate-500">{entry.percentage}% of filtered records</div>
-                    </button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Quality Notes</CardTitle>
-                <CardDescription>
-                  Practical interpretation notes for this filtered evidence set
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm text-slate-700">
-                <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-                  Use province and route patterns as reported burden signals, not exposure-normalized risk statements.
-                </div>
-                <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-                  Route concentration should be reviewed against traffic volume before turning it into policy claims.
-                </div>
-                <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-                  Weather context supports review prioritization, but it should not be presented as proof of causation without fuller investigation.
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          </TabsContent>
         </Tabs>
       )}
     </div>
