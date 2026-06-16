@@ -18,21 +18,18 @@ import { KpiCard } from "../components/analytics/KpiCard";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import {
   ANALYTICS_CAVEAT,
   analyticsRecords,
   buildCausePareto,
-  buildCauseTypeHeatmap,
   buildDataCompletenessHeatmap,
   buildIncidentTypePareto,
   buildKpiSummary,
-  buildPortBurden,
   buildProvinceBurden,
-  buildReportingChannelQuality,
   buildReviewPipeline,
   buildRouteBurden,
   buildTypeSeverityHeatmap,
-  buildVesselAgeSeverityRows,
   buildWeatherSeverityHeatmap,
 } from "../analytics";
 import { buildIncidentExplorerPath } from "../analytics/drilldown";
@@ -133,21 +130,6 @@ function buildVesselTypeIncidentHeatmap(records: typeof analyticsRecords, incide
   }));
 }
 
-function buildVesselAgeSeverityHeatmap(rows: ReturnType<typeof buildVesselAgeSeverityRows>) {
-  const severityColumns = ["Very Serious", "Serious", "Less Serious", "Near Miss"];
-  return rows.map((row) => ({
-    label: row.ageBand,
-    cells: severityColumns.map((severity) => {
-      const value = Number(row[severity as keyof typeof row] ?? 0);
-      return {
-        key: severity,
-        value,
-        text: String(value),
-      };
-    }),
-  }));
-}
-
 export function AnalyticsPage() {
   const navigate = useNavigate();
   const filterOptions = useMemo(() => getFilterOptions(analyticsRecords), []);
@@ -170,29 +152,15 @@ export function AnalyticsPage() {
   const incidentTypePareto = useMemo(() => buildIncidentTypePareto(filteredRecords), [filteredRecords]);
   const typeSeverityHeatmap = useMemo(() => buildTypeSeverityHeatmap(filteredRecords), [filteredRecords]);
   const provinceBurden = useMemo(() => buildProvinceBurden(filteredRecords, provinceMetric), [filteredRecords, provinceMetric]);
-  const portBurden = useMemo(() => buildPortBurden(filteredRecords, provinceMetric), [filteredRecords, provinceMetric]);
   const routeBurden = useMemo(() => buildRouteBurden(filteredRecords), [filteredRecords]);
-  const vesselAgeSeverityRows = useMemo(() => buildVesselAgeSeverityRows(filteredRecords), [filteredRecords]);
   const weatherSeverityHeatmap = useMemo(() => buildWeatherSeverityHeatmap(filteredRecords), [filteredRecords]);
   const causePareto = useMemo(() => buildCausePareto(filteredRecords), [filteredRecords]);
-  const causeTypeHeatmap = useMemo(() => buildCauseTypeHeatmap(filteredRecords), [filteredRecords]);
   const dataCompletenessHeatmap = useMemo(() => buildDataCompletenessHeatmap(filteredRecords), [filteredRecords]);
   const reviewPipeline = useMemo(() => buildReviewPipeline(filteredRecords), [filteredRecords]);
-  const reportingChannelQuality = useMemo(() => buildReportingChannelQuality(filteredRecords), [filteredRecords]);
 
   const typeSeverityColumns = typeSeverityHeatmap[0]?.cells.map((cell) => cell.key) ?? [];
-  const causeTypeColumns = causeTypeHeatmap[0]?.cells.map((cell) => cell.key) ?? [];
   const completenessColumns = dataCompletenessHeatmap[0]?.cells.map((cell) => cell.key) ?? [];
   const weatherColumns = weatherSeverityHeatmap[0]?.cells.map((cell) => cell.key) ?? [];
-  const reportingChannelRows = reportingChannelQuality.map((entry) => ({
-    label: `${entry.channel} (${entry.records})`,
-    cells: [
-      { key: "Minimum dataset", value: entry.minimumDatasetPct, text: `${entry.minimumDatasetPct}%` },
-      { key: "Linked evidence", value: entry.linkedEvidencePct, text: `${entry.linkedEvidencePct}%` },
-      { key: "Coordinates", value: entry.coordinatePct, text: `${entry.coordinatePct}%` },
-      { key: "Verified cause", value: entry.verifiedCausePct, text: `${entry.verifiedCausePct}%` },
-    ],
-  }));
   const incidentTypeKeys = useMemo(() => {
     const counts = filteredRecords.reduce((map, record) => {
       map.set(record.incidentType, (map.get(record.incidentType) ?? 0) + 1);
@@ -207,11 +175,6 @@ export function AnalyticsPage() {
     () => buildVesselTypeIncidentHeatmap(filteredRecords, incidentTypeKeys),
     [filteredRecords, incidentTypeKeys],
   );
-  const vesselAgeSeverityHeatmap = useMemo(
-    () => buildVesselAgeSeverityHeatmap(vesselAgeSeverityRows),
-    [vesselAgeSeverityRows],
-  );
-  const vesselAgeSeverityColumns = vesselAgeSeverityHeatmap[0]?.cells.map((cell) => cell.key) ?? [];
   const periodModeLabel = filters.year === "all" ? "year" : "incident month";
   const recordsForPeriod = (periodKey?: string) => {
     if (!periodKey) {
@@ -329,7 +292,23 @@ export function AnalyticsPage() {
           </CardContent>
         </Card>
       ) : (
-        <>
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="flex h-auto w-full flex-wrap justify-start gap-2 bg-white p-2 shadow-sm">
+            <TabsTrigger value="overview" className="flex-none px-4 py-2">
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="routes-vessels" className="flex-none px-4 py-2">
+              Routes & Vessels
+            </TabsTrigger>
+            <TabsTrigger value="conditions-causes" className="flex-none px-4 py-2">
+              Conditions & Causes
+            </TabsTrigger>
+            <TabsTrigger value="quality" className="flex-none px-4 py-2">
+              Data Quality
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             <KpiCard
               title="Incident Records"
@@ -352,106 +331,87 @@ export function AnalyticsPage() {
               formula="Count of records where severity classification is Very Serious."
               accentClassName="text-amber-700"
             />
-            <KpiCard
-              title="Linked Evidence Records"
-              value={`${kpis.linkedEvidence} / ${kpis.totalRecords}`}
-              context={`${kpis.linkedEvidencePct}% of filtered records`}
-              formula="Records with at least one linked document or attachment."
-              accentClassName="text-violet-700"
-            />
-            <KpiCard
-              title="Complete Minimum Dataset Records"
-              value={`${kpis.minimumDataset.complete} / ${kpis.minimumDataset.total}`}
-              context={`${kpis.minimumDataset.percentage}% complete minimum dataset coverage`}
-              formula="Records with incident ID, timestamp, incident type, severity, location, vessel identifier, reporting authority, and narrative summary."
-              accentClassName="text-cyan-700"
-            />
-            <KpiCard
-              title="Records Needing Follow-up"
-              value={kpis.followUp}
-              context="Under review or missing key review fields"
-              formula="Records that are under review, missing the minimum dataset, missing cause findings, or missing linked evidence."
-              accentClassName="text-slate-900"
-            />
           </div>
 
-          <Card id="monthly-incident-burden">
-            <CardHeader>
-              <CardTitle>Incident Records by Period</CardTitle>
-              <CardDescription>
-                Submitted records summarized by {periodModeLabel}; select a year filter for monthly detail
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={360}>
-                <BarChart data={periodBurdenData} barCategoryGap="28%">
-                  <CartesianGrid stroke="#e2e8f0" strokeDasharray="3 3" />
-                  <XAxis dataKey="period" stroke="#64748b" />
-                  <YAxis allowDecimals={false} stroke="#64748b" />
-                  <Tooltip contentStyle={tooltipStyle} />
-                  <Bar
-                    dataKey="incidents"
-                    name="Incident records"
-                    fill={seriesColors.incidents}
-                    radius={[8, 8, 0, 0]}
-                    onClick={(event) => {
-                      const periodKey = event?.periodKey ?? event?.payload?.periodKey;
-                      openExplorer(
-                        recordsForPeriod(periodKey),
-                        `Analytics · ${event?.period ?? event?.payload?.period ?? "Selected period"} incident records`,
-                      );
-                    }}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+            <Card id="monthly-incident-burden">
+              <CardHeader>
+                <CardTitle>Incident Records by Period</CardTitle>
+                <CardDescription>
+                  Submitted records summarized by {periodModeLabel}; select a year filter for monthly detail
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={periodBurdenData} barCategoryGap="28%">
+                    <CartesianGrid stroke="#e2e8f0" strokeDasharray="3 3" />
+                    <XAxis dataKey="period" stroke="#64748b" />
+                    <YAxis allowDecimals={false} stroke="#64748b" />
+                    <Tooltip contentStyle={tooltipStyle} />
+                    <Bar
+                      dataKey="incidents"
+                      name="Incident records"
+                      fill={seriesColors.incidents}
+                      radius={[8, 8, 0, 0]}
+                      onClick={(event) => {
+                        const periodKey = event?.periodKey ?? event?.payload?.periodKey;
+                        openExplorer(
+                          recordsForPeriod(periodKey),
+                          `Analytics · ${event?.period ?? event?.payload?.period ?? "Selected period"} incident records`,
+                        );
+                      }}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Fatalities and Injuries by Period</CardTitle>
-              <CardDescription>
-                Fatalities and injuries shown as separate bars for the same {periodModeLabel}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={360}>
-                <BarChart data={periodBurdenData} barCategoryGap="18%" barGap={4}>
-                  <CartesianGrid stroke="#e2e8f0" strokeDasharray="3 3" />
-                  <XAxis dataKey="period" stroke="#64748b" />
-                  <YAxis allowDecimals={false} stroke="#64748b" />
-                  <Tooltip contentStyle={tooltipStyle} />
-                  <Legend />
-                  <Bar
-                    dataKey="fatalities"
-                    name="Fatalities"
-                    fill={seriesColors.fatalities}
-                    radius={[8, 8, 0, 0]}
-                    onClick={(event) => {
-                      const periodKey = event?.periodKey ?? event?.payload?.periodKey;
-                      openExplorer(
-                        recordsForPeriod(periodKey),
-                        `Analytics · ${event?.period ?? event?.payload?.period ?? "Selected period"} fatalities and injuries`,
-                      );
-                    }}
-                  />
-                  <Bar
-                    dataKey="injuries"
-                    name="Injuries"
-                    fill={seriesColors.injuries}
-                    radius={[8, 8, 0, 0]}
-                    onClick={(event) => {
-                      const periodKey = event?.periodKey ?? event?.payload?.periodKey;
-                      openExplorer(
-                        recordsForPeriod(periodKey),
-                        `Analytics · ${event?.period ?? event?.payload?.period ?? "Selected period"} fatalities and injuries`,
-                      );
-                    }}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Fatalities and Injuries by Period</CardTitle>
+                <CardDescription>
+                  Fatalities and injuries shown as separate bars for the same {periodModeLabel}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={periodBurdenData} barCategoryGap="18%" barGap={4}>
+                    <CartesianGrid stroke="#e2e8f0" strokeDasharray="3 3" />
+                    <XAxis dataKey="period" stroke="#64748b" />
+                    <YAxis allowDecimals={false} stroke="#64748b" />
+                    <Tooltip contentStyle={tooltipStyle} />
+                    <Legend />
+                    <Bar
+                      dataKey="fatalities"
+                      name="Fatalities"
+                      fill={seriesColors.fatalities}
+                      radius={[8, 8, 0, 0]}
+                      onClick={(event) => {
+                        const periodKey = event?.periodKey ?? event?.payload?.periodKey;
+                        openExplorer(
+                          recordsForPeriod(periodKey),
+                          `Analytics · ${event?.period ?? event?.payload?.period ?? "Selected period"} fatalities and injuries`,
+                        );
+                      }}
+                    />
+                    <Bar
+                      dataKey="injuries"
+                      name="Injuries"
+                      fill={seriesColors.injuries}
+                      radius={[8, 8, 0, 0]}
+                      onClick={(event) => {
+                        const periodKey = event?.periodKey ?? event?.payload?.periodKey;
+                        openExplorer(
+                          recordsForPeriod(periodKey),
+                          `Analytics · ${event?.period ?? event?.payload?.period ?? "Selected period"} fatalities and injuries`,
+                        );
+                      }}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
 
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <Card id="incident-type-pareto">
@@ -524,7 +484,9 @@ export function AnalyticsPage() {
               </CardContent>
             </Card>
           </div>
+          </TabsContent>
 
+          <TabsContent value="routes-vessels" className="space-y-6">
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <Card id="province-burden">
               <CardHeader className="space-y-4">
@@ -572,57 +534,6 @@ export function AnalyticsPage() {
               </CardContent>
             </Card>
 
-            <Card id="port-burden">
-              <CardHeader>
-                <CardTitle>Port Burden Ranking</CardTitle>
-                <CardDescription>
-                  Top ports in the current selection by the same burden metric
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Port</TableHead>
-                      <TableHead>Province</TableHead>
-                      <TableHead className="text-right">Records</TableHead>
-                      <TableHead className="text-right">Fatalities + injuries</TableHead>
-                      <TableHead className="text-right">Very serious</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {portBurden.slice(0, 8).map((entry) => (
-                      <TableRow key={`${entry.label}-${entry.province}`}>
-                        <TableCell className="text-slate-900">
-                          <button
-                            type="button"
-                            className="text-left hover:text-blue-700 hover:underline"
-                            onClick={() =>
-                              openExplorer(
-                                filteredRecords.filter(
-                                  (record) => record.nearestPort === entry.label && record.province === entry.province,
-                                ),
-                                `Analytics · ${entry.label}, ${entry.province}`,
-                                { province: entry.province, search: entry.label },
-                              )
-                            }
-                          >
-                            {entry.label}
-                          </button>
-                        </TableCell>
-                        <TableCell className="text-slate-600">{entry.province}</TableCell>
-                        <TableCell className="text-right">{entry.records}</TableCell>
-                        <TableCell className="text-right">{entry.totalCasualties}</TableCell>
-                        <TableCell className="text-right">{entry.verySerious}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <Card id="route-burden">
               <CardHeader>
                 <CardTitle>Origin-Destination / Route Review</CardTitle>
@@ -669,7 +580,9 @@ export function AnalyticsPage() {
                 </Table>
               </CardContent>
             </Card>
+          </div>
 
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <Card id="vessel-type-incident-type">
               <CardHeader>
                 <CardTitle>Vessel Type × Incident Type</CardTitle>
@@ -696,34 +609,10 @@ export function AnalyticsPage() {
               </CardContent>
             </Card>
           </div>
+          </TabsContent>
 
+          <TabsContent value="conditions-causes" className="space-y-6">
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-            <Card id="vessel-age-severity">
-              <CardHeader>
-                <CardTitle>Vessel Age Band × Severity</CardTitle>
-                <CardDescription>
-                  Matrix of reported severity records by vessel age band. This is not exposure-normalized by fleet age.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <HeatmapGrid
-                  columns={vesselAgeSeverityColumns}
-                  rows={vesselAgeSeverityHeatmap}
-                  valueLabel="records"
-                  palette="rose"
-                  onCellClick={(ageBand, severity) => {
-                    openExplorer(
-                      filteredRecords.filter(
-                        (record) => record.vesselAgeBand === ageBand && record.severityLevel === severity,
-                      ),
-                      `Analytics · ${ageBand} × ${severity}`,
-                      { severity },
-                    );
-                  }}
-                />
-              </CardContent>
-            </Card>
-
             <Card id="weather-analysis">
               <CardHeader>
                 <CardTitle>Weather and Sea Condition Analysis</CardTitle>
@@ -749,9 +638,7 @@ export function AnalyticsPage() {
                 />
               </CardContent>
             </Card>
-          </div>
 
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <Card id="cause-pareto">
               <CardHeader>
                 <CardTitle>Cause Factor Ranking</CardTitle>
@@ -784,34 +671,10 @@ export function AnalyticsPage() {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
-
-            <Card id="cause-type-heatmap">
-              <CardHeader>
-                <CardTitle>Cause Category × Incident Type</CardTitle>
-                <CardDescription>
-                  Count of records where a coded cause category appears with each incident type
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <HeatmapGrid
-                  columns={causeTypeColumns}
-                  rows={causeTypeHeatmap}
-                  valueLabel="records"
-                  palette="teal"
-                  onCellClick={(causeCategory, incidentType) => {
-                    openExplorer(
-                      filteredRecords.filter(
-                        (record) => record.causeCategory === causeCategory && record.incidentType === incidentType,
-                      ),
-                      `Analytics · ${causeCategory} × ${incidentType}`,
-                      { type: incidentType, search: causeCategory },
-                    );
-                  }}
-                />
-              </CardContent>
-            </Card>
           </div>
+          </TabsContent>
 
+          <TabsContent value="quality" className="space-y-6">
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
             <Card id="data-completeness">
               <CardHeader>
@@ -837,29 +700,6 @@ export function AnalyticsPage() {
               </CardContent>
             </Card>
 
-            <Card id="channel-quality">
-              <CardHeader>
-                <CardTitle>Reporting Channel Quality</CardTitle>
-                <CardDescription>
-                  Data quality indicators by reporting channel
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <HeatmapGrid
-                  columns={["Minimum dataset", "Linked evidence", "Coordinates", "Verified cause"]}
-                  rows={reportingChannelRows}
-                  valueLabel="complete"
-                  palette="teal"
-                  onCellClick={(rowLabel) => {
-                    const channel = rowLabel.replace(/\s+\(\d+\)$/, "");
-                    openExplorer(
-                      filteredRecords.filter((record) => record.methodOfReporting === channel),
-                      `Analytics · ${channel} reporting channel`,
-                    );
-                  }}
-                />
-              </CardContent>
-            </Card>
           </div>
 
           <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.1fr_0.9fr]">
@@ -919,10 +759,10 @@ export function AnalyticsPage() {
               </CardHeader>
               <CardContent className="space-y-3 text-sm text-slate-700">
                 <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-                  Use province, route, and vessel-age patterns as reported burden signals, not exposure-normalized risk statements.
+                  Use province and route patterns as reported burden signals, not exposure-normalized risk statements.
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-                  Route and port concentration should be reviewed against traffic volume before turning them into policy claims.
+                  Route concentration should be reviewed against traffic volume before turning it into policy claims.
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
                   Weather context supports review prioritization, but it should not be presented as proof of causation without fuller investigation.
@@ -930,7 +770,8 @@ export function AnalyticsPage() {
               </CardContent>
             </Card>
           </div>
-        </>
+          </TabsContent>
+        </Tabs>
       )}
     </div>
   );
