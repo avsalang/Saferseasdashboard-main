@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "test": "node --test --experimental-strip-types src/app/analytics/*.test.ts"
+    "test": "node --test --experimental-strip-types src/app/analytics/*.test.ts src/app/riskAssessment/*.test.ts"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",

@@ -25,6 +25,10 @@ export const router = createHashRouter([
         lazy: async () => ({ Component: (await import("./pages/AnalyticsPage")).AnalyticsPage }),
       },
       {
+        path: "risk-assessment",
+        lazy: async () => ({ Component: (await import("./pages/RiskAssessmentPage")).RiskAssessmentPage }),
+      },
+      {
         path: "incident-explorer",
         lazy: async () => ({ Component: (await import("./pages/IncidentExplorerPage")).IncidentExplorerPage }),
       },

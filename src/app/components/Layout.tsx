@@ -21,6 +21,7 @@ export function Layout() {
     { name: "Incident Explorer", href: "/incident-explorer" },
     { name: "GIS Map", href: "/gis-map" },
     { name: "Analytics", href: "/analytics" },
+    { name: "Risk Assessment", href: "/risk-assessment" },
     { name: "Policy Review", href: "/policy-insights" },
     { name: "Profile", href: "/profile" },
   ];
