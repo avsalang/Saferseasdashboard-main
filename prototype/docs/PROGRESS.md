@@ -7,7 +7,7 @@ User approved the complete Vue/Quasar mockup, verification and update of the exi
 - Operations, MAIC revisions, cases/actions, registry and administration: complete.
 - Imports, reconciliation, 22 outputs, GIS, analytics, risk/policy: complete within documented prototype boundaries.
 - Developer handoff, 49-ID/22-output mapping, independent defect review and browser acceptance: complete.
-- Repository integration and live Pages verification: in progress.
+- Repository integration and live Pages verification: complete. Published source b5d841c; GitHub Actions run 42156571634 succeeded and the live site passed acceptance.
 
 Material review fixes include scoped linked records/artifact history; preserved evidence and unique references on draft discard; visible storage failure; immutable complete output snapshots; archive access after import reversal; saved MAIC/spot observations/evidence; and retained import blockers. See tests and acceptance results.
 

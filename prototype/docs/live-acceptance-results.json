@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "url": "https://avsalang.github.io/Saferseasdashboard-main/",
+  "checks": [
+    "Published Pages root returns 200",
+    "Published admin uses source SAFERSEAS image banner",
+    "Published route opens: /admin/incidents",
+    "Published route has content: /admin/incidents",
+    "Published route opens: /admin/analytics",
+    "Published route has content: /admin/analytics",
+    "Published route opens: /admin/map",
+    "Published route has content: /admin/map",
+    "Published route opens: /admin/reports",
+    "Published route has content: /admin/reports",
+    "Published route opens: /admin/accounts",
+    "Published route has content: /admin/accounts",
+    "Hash route refresh loads its assets under the Pages repository subpath",
+    "Published reporter uses source SAFERSEAS metric card",
+    "Published incident form uses source completion panel",
+    "Published reporter form fits mobile viewport",
+    "Published reporter is denied staff account management",
+    "No page exceptions in published build"
+  ],
+  "errors": []
+}

@@ -81,8 +81,8 @@ Files: `prototype/docs/*`, `prototype/tests/browser.mjs`, root `README.md`, `pro
 Files: `.github/workflows/deploy-pages.yml`, review docs as needed.
 
 - [x] Review whole diff against approved spec; resolve material omissions.
-- [ ] Commit/push verified source, preserve previous commit and update Pages workflow to build `prototype/`.
-- [ ] Follow deployment to success; verify live URL/asset and route behavior and return source/deployment/handoff links.
+- [x] Commit/push verified source, preserve previous commit and update Pages workflow to build `prototype/`.
+- [x] Follow deployment to success; verify live URL/asset and route behavior and return source/deployment/handoff links.
 
 ## Execution ledger
 
