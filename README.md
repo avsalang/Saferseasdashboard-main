@@ -1,29 +1,35 @@
+# SAFERSEAS — MARINA platform mockup
 
-  # SAFERSEAS Dashboard Wireframe
+An interactive Vue/Quasar developer reference for MARINA-issued reporting accounts and the full administrative workflow. The interface reuses the existing SAFERSEAS layouts, page components, styles and assets, with MARINA-specific fields, review stages and outputs.
 
-  This is a code bundle for SAFERSEAS Dashboard Wireframe. The original project is available at https://www.figma.com/design/C6GVddVNy9M48AVQ11seJs/SAFERSEAS-Dashboard-Wireframe.
+**[Open the demonstration](https://avsalang.github.io/Saferseasdashboard-main/)** · **[Developer handoff](prototype/docs/DEVELOPER_HANDOFF.md)** · **[Workflow audit](prototype/docs/MARINA_WORKFLOW_AUDIT.md)** · **[Screen/output coverage](prototype/docs/SCREEN_OUTPUT_COVERAGE.md)**
 
-  ## Running the code
+Choose Reporter, Investigator/reviewer, Enforcement officer, Reporting analyst or Administrator on the sign-in page. Demo password: `Demo2026!`. All records are fictional; changes are stored in your browser. The public Pages URL hosts a design demonstration. The intended production platform requires accounts issued by MARINA and has no public interface or self-registration.
 
-  Run `npm i` to install the dependencies.
+## Run the current mockup
 
-  Run `npm run dev` to start the development server.
-  
-  ## Sharing On GitHub Pages
+```sh
+cd prototype
+npm ci
+npm run dev
+```
 
-  This project is configured to work on GitHub Pages using hash-based routes, so direct links to pages like `#/dashboard` or `#/gis-map` will not 404.
+Use Node 22 or newer. Run `npm test` and `npm run build` for verification. Browser acceptance commands and production integration responsibilities are in the handoff.
 
-  1. Run `npm install --legacy-peer-deps`
-  2. Run `npm run build`
-  3. Upload the contents of the generated `dist` folder to GitHub Pages
+## Included
 
-  If you publish from a GitHub repository:
+- Multi-vessel incident intake, drafts, submission, correction/resubmission and tracking.
+- Staff review, investigations, MAIC 1B/2/3B revisions and follow-up actions.
+- Enforcement cases, SCOs, decisions, penalties and certificate/SRB actions.
+- Synthetic import staging, source reconciliation and controlled reversal.
+- Filtered GIS/analytics and 22 output families with CSV/XLSX/GeoJSON/SVG where offered and browser-print previews.
+- Account issuance/activation/suspension, roles, offices, reference data, templates, audit and settings.
+- 49 specified screen IDs with a built-in Developer handoff page.
 
-  1. Push this project to GitHub
-  2. In the repository settings, open `Pages`
-  3. Set `Source` to `GitHub Actions`
-  4. Push to `main` and wait for the `Deploy To GitHub Pages` workflow to finish
-  5. Share the published URL with your peers
+This is a browser-local prototype. Real authentication, protected data, file storage, email, workbook ingestion, official templates and server-side jobs remain production work. No supplied MARINA records or evidence files are published.
 
-  The landing page will open at the site root, and internal screens will use URLs like `#/dashboard`.
-  
+## Repository structure
+
+`prototype/` is the current Vue/Quasar app and the source built by GitHub Pages. Root `src/` and its original package remain the earlier React/Figma mockup; see [the previous README](docs/legacy-react-readme.md). The production backend/admin/reporter repositories are separate and have not been changed by this mockup.
+
+The Pages workflow installs locked dependencies, runs domain/output regression tests, builds `prototype/dist` and deploys it to the existing site using hash routes.

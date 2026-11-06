@@ -1,0 +1,19 @@
+# Reporter module
+
+## Existing frontend reuse
+
+The reporting dashboard directly reuses the template and scoped CSS from the existing `saferseas-frontend-public/src/pages/Dashboard/HomePage/IndexPage.vue` and its `StatsCards`, `DashboardCharts`, `SeverityAnalysis` and `RecentIncidents` components. The local copies are in `dashboard/`. The navy gradient metric, original card typography, three ECharts panels, year/month controls, desktop/mobile recent-record views and panel grid are retained. Data is derived from scoped local events. An actual correction-request count replaces the original unsupported safety score; validated status replaces the source resolved-status series. Seriousness uses the specified canonical categories.
+
+The incident form directly reuses the original `Dashboard/Incidents/Create.vue` completion card/menu, page heading, current-step header, step pill, glass form card, navigation elements and scoped CSS. The five functional steps and their Quasar tab selectors remain available; all existing mapped fields, unknown values, submission and correction behavior are retained. API calls, anonymous paths and source CAPTCHA integration are excluded from this local account-only mockup.
+
+Routes cover R01 dashboard (`/reporter`), R02 report search/filter/sort (`/reporter/reports`), R03 progressive incident form (`/reporter/reports/new`), R04 detail and tracking (`/reporter/reports/:id`), R05 correction editing (`/reporter/reports/:id/edit`), R06 drafts (`/reporter/drafts`), R07 vessel CRUD (`/reporter/vessels`), and R08 evidence metadata (`/reporter/documents`). Route authorization is supplied by the root router; pages additionally check event scope and mutation permission through the shared demo store.
+
+`IncidentForm.vue` and `IncidentDetail.vue` accept `staff: true` for `/admin/incidents` routes. They read `route.params.id`, never route names. Detail tabs use `route.query.tab`. The shared form supports full mapped vessel particulars, multiple vessel snapshots, voyage/cargo, independent office roles, decimal tonnage, date/time unknown flags, nullable consequence counts, multi-value classifications, factual narrative, response/actions, recommendations, sources and attachment metadata. The record owner’s issued identity is read-only.
+
+Saving a new draft creates a persistent event and replaces the URL with its edit route. Submitting uses `saveEvent(...,{submit:true})`; the store creates submitted spot-report revisions and transitions a correction into resubmission. Existing history, multi-value fields and attachment IDs are preserved. Consequence counts remain null until explicitly declared known; turning off Unknown enables an empty input. The user explicitly enters any confirmed zero.
+
+Directory records are reusable snapshots. Editing or removing a directory vessel does not modify historical incident vessel snapshots. Evidence metadata can be attached to draft reports or while editing a correction. Submitted evidence is retained; only own unsubmitted metadata has a removal action. All mutation errors are displayed.
+
+The detail workspace includes occurrence, all vessel fields, consequences, evidence metadata preview, attributed chronology and retained submitted revisions. Staff additionally receive authorized review transitions, investigation navigation and contextual enforcement/actions/lineage tabs. These tabs respect relevant permissions; enforcement case content is never shown to a reporter.
+
+Limitations: selected file contents are never uploaded or persisted, only metadata. Report revision preview displays the actual retained fields rather than an official signed template. Client-side role checks demonstrate intended authorization and are not production security. Build and end-to-end verification are performed by the integration owner; this module does not install dependencies or publish.

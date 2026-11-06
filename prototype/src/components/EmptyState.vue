@@ -1,0 +1,1 @@
+<template><div class="empty-state"><q-icon :name="icon||'inbox'" size="42px" color="blue-grey-4"/><h3>{{title||'No records yet'}}</h3><p class="muted">{{message}}</p><slot/></div></template><script setup>defineProps({title:String,message:String,icon:String})</script>

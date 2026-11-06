@@ -25,16 +25,20 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+          cache-dependency-path: prototype/package-lock.json
           cache: npm
 
       - name: Install Dependencies
-        run: npm install --legacy-peer-deps
+        working-directory: prototype
+        run: npm ci
 
-      - name: Fix Vite Binary Permissions
-        run: chmod +x node_modules/.bin/vite node_modules/vite/bin/vite.js
+      - name: Domain and output regression tests
+        working-directory: prototype
+        run: npm test
 
       - name: Build Site
+        working-directory: prototype
         run: npm run build
 
       - name: Setup Pages
@@ -43,7 +47,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./prototype/dist
 
   deploy:
     environment:

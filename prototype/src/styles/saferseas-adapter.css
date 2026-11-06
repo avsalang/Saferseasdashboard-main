@@ -1,0 +1,39 @@
+/* Existing SAFERSEAS global tokens are authoritative; structural additions use them. */
+:root{--ss-bg:var(--dashboard-bg);--ss-card:var(--card-bg);--ss-border:var(--card-border);--ss-text:var(--text-primary);--ss-muted:var(--text-secondary);--ss-primary:#1a365d;--ss-soft:var(--status-box-bg)}
+.body--dark{--ss-bg:var(--dashboard-bg);--ss-card:var(--card-bg);--ss-border:var(--card-border);--ss-text:var(--text-primary);--ss-muted:var(--text-secondary);--ss-soft:var(--status-box-bg)}
+.panel,.metric-card{border-radius:24px}.q-btn{border-radius:12px}.q-btn--round{border-radius:50%}.q-field--outlined .q-field__control{border-radius:12px;background:var(--input-bg)}
+.q-dialog__inner>div{overflow:auto}.q-card{border-radius:24px}.q-toolbar{min-height:unset}.page-wrap{padding:32px}.header-premium .q-toolbar{width:100%}
+@media(max-width:700px){.page-wrap{padding:20px 15px}.panel{padding:17px}.header-premium .q-toolbar{padding:0 16px!important}}
+
+/* Table rules reused from production Incidents/sections/IncidentTable.vue. */
+.q-table__container thead tr th {
+  font-weight: 500;
+  color: #9ca3af;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  border-bottom: 0.5px solid #e2e5ea;
+  padding: 12px 16px;
+  background: #f9fafb;
+}
+
+.q-table__container tbody tr td {
+  padding: 11px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #374151;
+  border-bottom: 0.5px solid #f3f4f6;
+  vertical-align: middle;
+}
+
+.q-table__container tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.q-table__container tbody tr {
+  transition: all 0.3s ease;
+}
+
+.q-table__container tbody tr:hover {
+  background: rgba(30, 58, 138, 0.02) !important;
+}

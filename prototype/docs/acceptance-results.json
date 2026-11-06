@@ -1,0 +1,56 @@
+{
+  "route-results": {
+    "checks": 55,
+    "exceptions": [],
+    "overflow": []
+  },
+  "reporter-journey": {
+    "passed": true,
+    "checks": [
+      "two-vessel report saved as draft through UI",
+      "both vessel snapshots retain decimal GT",
+      "draft retained document metadata and source reference",
+      "all untouched consequence counts remain null",
+      "multi-value classifications retained in draft",
+      "submission created one retained spot revision",
+      "staff correction request changed event status",
+      "correction notified report owner",
+      "correction editor displays retained evidence",
+      "reporter resubmitted corrected report",
+      "resubmission retained vessels, classifications and evidence",
+      "unknown consequences and occurrence time retained",
+      "resubmission retained both spot-report revisions",
+      "staff validated resubmitted report",
+      "complete attributed correction-cycle chronology retained",
+      "history contains actor identity and timestamp at every transition",
+      "revisions remain one casualty event",
+      "no browser console errors or page exceptions during journey"
+    ],
+    "errors": []
+  },
+  "admin-journey": {
+    "passed": true,
+    "checks": [
+      "Initial MAIC draft reviewed and issued through UI",
+      "Issued initial revision remains unchanged after amendment",
+      "Progress observations save independently",
+      "Final report source checklist codes retained",
+      "Printed Form 2 includes the saved named progress section",
+      "Printable report fits its page width",
+      "Case saves a separate SCO with unknown time preserved",
+      "Missing-date finding blocks import confirmation",
+      "Import groups five raw rows into three events and four retained vessel involvements",
+      "All source rows retain lineage including excluded duplicate",
+      "Catalogue generates an actual CSV file",
+      "Output snapshot captures the full selection and every vessel involvement",
+      "History redownload uses retained snapshot",
+      "Import reversal retains batch and removes imported live events",
+      "Archived snapshot stays accessible after import reversal",
+      "Administrator issues a reporter invitation without self-registration",
+      "Only an existing issued invitation activates",
+      "Administrator suspends an issued account with history retained",
+      "No browser exceptions during administrative workflows"
+    ],
+    "errors": []
+  }
+}
