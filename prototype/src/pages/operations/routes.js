@@ -8,12 +8,12 @@ import Actions from './Actions.vue'
 import Cases from './Cases.vue'
 import Registry from './Registry.vue'
 
-const roles = ['admin', 'reviewer', 'enforcement', 'analyst']
+const roles = ['reviewer', 'investigator']
 const route = (path, component, title, screenId, permission, props) => ({ path, component, props, meta: { roles, title, screenId, ...(permission ? { permission } : {}) } })
 export const operationsRoutes = [
   route('/admin', Dashboard, 'Operations overview', 'A01'),
   route('/admin/incidents', IncidentRegister, 'Incident register', 'A02'),
-  route('/admin/incidents/new', IncidentForm, 'New incident', 'A04', 'review', { staff: true }),
+  route('/admin/incidents/new', IncidentForm, 'New incident', 'A04', 'report', { staff: true }),
   route('/admin/incidents/:id/edit', IncidentForm, 'Edit incident', 'A04', 'review', { staff: true }),
   route('/admin/incidents/:id', Workspace, 'Incident workspace', 'A03'),
   route('/admin/review', IncidentRegister, 'Review queue', 'A05', 'review', { review: true }),

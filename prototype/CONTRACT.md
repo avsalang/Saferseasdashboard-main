@@ -24,7 +24,7 @@ All files under `prototype/`. Vue3 JS `<script setup>` SFC, Quasar globally avai
 
 IDs are strings. Dates ISO local YYYY-MM-DD, times HH:mm; timestamps ISO. Monetary/GT values nullable numbers. Counts nullable numbers. Do not use `||0` to overwrite unknown input.
 
-`users`: `{id,name,email,role,officeId,status:'active'|'invited'|'suspended',scope:'own'|'office'|'all',organization,lastLogin}`. Seed IDs `u-reporter`, `u-reviewer`, `u-enforcement`, `u-analyst`, `u-admin`; roles `reporter,reviewer,enforcement,analyst,admin`. Demo password `Demo2026!` only; account activation/recovery simulated. Assign reporter new records to self, preserve attribution on suspension.
+`users`: `{id,name,email,role,officeId,status:'active'|'invited'|'suspended',scope:'own'|'office'|'all',organization,lastLogin}`. Seed demo IDs: `u-reporter` (MRO Reporter), `u-reviewer` (MRO Reviewer), `u-investigator` (MARINA Investigator). These are the only three role codes: `reporter`, `reviewer`, `investigator`. The MARINA Investigator has every function and all-office access, including account issuance/configuration. MRO Reviewer defaults to assigned office/AOR; MRO Reporter defaults to own records. Demo password `Demo2026!` only; account activation/recovery simulated. Schema version 2 migrates the earlier browser state, preserving edits and historical actor IDs while suspending retired account types. The `admin` permission is an all-functions action shortcut for the MARINA Investigator, not a fourth account type.
 
 `roles`: `{id,name,description,permissions:string[],scope}`; IDs same role codes. `offices`: `{id,code,name,aliases:string[],active}`; IDs `MRO-IV`,`MRO-NCR`,`MRO-VII`, etc.
 

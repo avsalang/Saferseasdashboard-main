@@ -1,4 +1,4 @@
-const roles = ['admin','reviewer','enforcement','analyst']
+const roles = ['reviewer','investigator']
 const pages = import.meta.glob('./*Page.vue')
 export const dataRoutes = [
  ['/admin/imports','ImportsPage','Import batches','D01','analyze'],

@@ -30,7 +30,7 @@ const sources=computed(()=>Object.entries(events.value.reduce((a,e)=>{const key=
 </script>
 <template>
  <div class="q-px-lg q-py-lg dashboard-bg-navy dashboard-source">
-  <div class="row items-center justify-between q-mb-lg"><div class="row items-center q-gutter-x-sm"><q-icon name="dashboard" color="primary" size="sm"/><h2 class="text-h5 text-weight-bolder text-primary-theme q-my-none dashboard-title">Dashboard</h2></div><div class="row q-gutter-sm"><q-btn flat dense no-caps icon="filter_list" label="Filters" @click="filtersOpen=true"/><q-btn v-if="store.can('review')" unelevated color="primary" no-caps icon="add" label="Record incident" to="/admin/incidents/new"/></div></div>
+  <div class="row items-center justify-between q-mb-lg"><div class="row items-center q-gutter-x-sm"><q-icon name="dashboard" color="primary" size="sm"/><h2 class="text-h5 text-weight-bolder text-primary-theme q-my-none dashboard-title">Dashboard</h2></div><div class="row q-gutter-sm"><q-btn flat dense no-caps icon="filter_list" label="Filters" @click="filtersOpen=true"/><q-btn v-if="store.can('report')" unelevated color="primary" no-caps icon="add" label="Record incident" to="/admin/incidents/new"/></div></div>
   <div class="row q-col-gutter-lg items-start">
    <div class="col-12 col-lg-8 column q-gutter-y-lg">
     <FeaturedBanner/>

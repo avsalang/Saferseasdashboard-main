@@ -12,7 +12,7 @@ async function select(label,value){await field(label).click();await page.getByRo
 async function go(path){await page.goto(BASE+'#'+path);await page.waitForTimeout(400)}
 function check(value,message){assert.ok(value,message);checks.push(message);console.log('PASS '+message)}
 try{
-await page.goto(BASE);await page.getByRole('button',{name:'Administrator MRO-NCR'}).click();await page.waitForURL('**/#/admin');
+await page.goto(BASE);await page.getByRole('button',{name:'MARINA Investigator MRO-NCR'}).click();await page.waitForURL('**/#/admin');
 await go('/admin/investigations/e-003');await page.getByRole('button',{name:'Create draft',exact:true}).click();
 await fill('Sequence of events and circumstances','QA initial investigation narrative');await fill('Noted by / director','QA Demonstration Director');await fill('Noted date','2026-11-06');
 await page.getByRole('button',{name:'Save for review',exact:true}).click();await page.getByRole('button',{name:'Issue demonstration revision',exact:true}).click();

@@ -4,7 +4,7 @@ An interactive Vue/Quasar developer reference for MARINA-issued reporting accoun
 
 **[Open the demonstration](https://avsalang.github.io/Saferseasdashboard-main/)** · **[Developer handoff](prototype/docs/DEVELOPER_HANDOFF.md)** · **[Workflow audit](prototype/docs/MARINA_WORKFLOW_AUDIT.md)** · **[Screen/output coverage](prototype/docs/SCREEN_OUTPUT_COVERAGE.md)**
 
-Choose Reporter, Investigator/reviewer, Enforcement officer, Reporting analyst or Administrator on the sign-in page. Demo password: `Demo2026!`. All records are fictional; changes are stored in your browser. The public Pages URL hosts a design demonstration. The intended production platform requires accounts issued by MARINA and has no public interface or self-registration.
+Choose MRO Reporter, MRO Reviewer or MARINA Investigator on the sign-in page. Demo password: `Demo2026!`. All records are fictional; changes are stored in your browser. The public Pages URL hosts a design demonstration. The intended production platform requires accounts issued by MARINA and has no public interface or self-registration.
 
 ## Run the current mockup
 

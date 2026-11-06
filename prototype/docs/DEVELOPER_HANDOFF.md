@@ -19,24 +19,22 @@ npm run build
 
 Open the address printed by Vite. Select a demonstration role on the sign-in page. These buttons are presentation controls, not production authentication. Manual demo sign-in uses the email below and `Demo2026!`.
 
-| Role | Issued demo email | Primary use |
+| Role | Issued demo email | Access |
 |---|---|---|
-| Reporter | reporter@example.org | Own incident drafts, submissions, corrections, vessels and document metadata |
-| Investigator / reviewer | reviewer@example.org | Review, validation, investigations, MAIC revisions and recommendations |
-| Enforcement officer | enforcement@example.org | Cases, SCOs, decisions, penalties and certificate/SRB actions |
-| Reporting analyst | analyst@example.org | Imports, reconciliation, maps, analytics and outputs |
-| Administrator | admin@example.org | All modules, issued accounts, roles, offices, reference data and audit |
+| MRO Reporter | reporter@example.org | Own incident intake, drafts, submissions, corrections and source metadata |
+| MRO Reviewer | reviewer@example.org | Regional report review, validation/corrections, scoped analysis and outputs |
+| MARINA Investigator | investigator@example.org | All functions across offices: review, investigations, cases, outputs, accounts, roles, configuration, audit and settings |
 
 Sign out to change roles. Changes persist in local browser storage. **Reset demo** on the sign-in page restores fictional seed records. Each browser has a separate dataset. No MARINA source records, evidence files or credentials are included.
 
 ## What to walk through
 
-1. **Report and correction cycle.** As Reporter, create an incident, identify each involved vessel, leave unknown dates/counts explicitly unknown, attach fictional source metadata and save. Submit it. As reviewer, open the same reference in the review queue, request corrections and provide instructions. As Reporter, open the notification, correct and resubmit. Validate as reviewer. Check the retained revisions and attributed history.
+1. **Report and correction cycle.** As MRO Reporter, create an incident, identify each involved vessel, leave unknown dates/counts explicitly unknown, attach fictional source metadata and save. Submit it. As MRO Reviewer, open the same reference in the review queue, request corrections and provide instructions. As MRO Reporter, open the notification, correct and resubmit. Validate as reviewer. Check the retained revisions and attributed history.
 2. **Investigation.** Open the validated event in Investigations. Assign an investigator, prepare an initial Form 1B, save for review and issue a demonstration revision with the required preparer/noted-by details. Prepare repeated Form 2 progress observations and a Form 3B final investigation. Issued revisions remain immutable; create another revision to amend them. Their observations do not multiply event casualties.
 3. **Enforcement.** Create a case linked to an event and involved vessel. Record the respondent, violations, responsible office and outcome. Add separate SCOs, decisions, payments, suspension and lifting entries. Preserve actual issuing office and unknown issue times. The source-recorded 72-hour category is distinct from a calculated or legally approved deadline.
 4. **Historical import.** Start a synthetic import. Inspect mapping, merged event groups, missing-date blocker and duplicate candidate. Accept unknowns explicitly and approve reconciliation. Confirm the local import; inspect preserved source lineage. Reverse it when no downstream records exist. An arbitrary uploaded workbook is not parsed in this mockup.
 5. **Selection to output.** Set a period and office/category selection in Analytics or GIS. Compare event and vessel-involvement denominators. Check approximate and unlocated positions. Build an output family in Report catalogue, download it, then reopen/download the retained snapshot in Output history. Pagination does not restrict downloads.
-6. **Issued accounts.** As administrator, issue a fictional invitation, assign role/office/scope and activate it using the demonstration activation page. Suspend/reactivate an account and inspect audit attribution. Invitation, recovery and email delivery remain local simulations.
+6. **Issued accounts.** As MARINA Investigator, issue a fictional invitation, assign role/office/scope and activate it using the demonstration activation page. Suspend/reactivate an account and inspect audit attribution. Invitation, recovery and email delivery remain local simulations.
 7. **Configuration and handoff.** Edit active reference values, review distinct workflow states and versioned template records, export the audit register, and open Developer handoff. Official template masters and operational rules still require MARINA decisions.
 
 ## Implementation map
@@ -57,6 +55,10 @@ Sign out to change roles. Changes persist in local browser storage. **Reset demo
 | Accounts/configuration/audit | `src/pages/ManagementPage.vue`, `SettingsPage.vue` |
 
 See [screen and output coverage](SCREEN_OUTPUT_COVERAGE.md), [domain contract](../CONTRACT.md), module READMEs and [original workflow audit](MARINA_WORKFLOW_AUDIT.md). The audit references the supplied source files; those files are intentionally not distributed with this public demonstration.
+
+## Confirmed account model
+
+Only these three account types are supported. MRO Reporter defaults to own records; MRO Reviewer defaults to the assigned regional office/AOR. MARINA Investigator has all functions and all-office scope, including account issuance and configuration. Investigation assignment selects MARINA Investigator accounts. Separate Administrator, Analyst, Enforcement Officer and combined Investigator/Reviewer accounts are removed. The older five-role mockup is superseded; upgrading it preserves records and historical attribution while suspending the retired demo accounts.
 
 ## Data rules to preserve
 

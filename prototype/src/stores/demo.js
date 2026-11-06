@@ -1,11 +1,12 @@
 import { reactive, computed, watch } from 'vue';
 import { createSeed, blankEvent, blankVessel } from '../data/seed.js';
-import { rolePermissions,canAccess,filterEvents,summarizeEvents,transitionEvent,appendReport,normalizedCount,clone } from '../data/domain.js';
+import { roleLabels,rolePermissions,canAccess,filterEvents,summarizeEvents,transitionEvent,appendReport,normalizedCount,clone } from '../data/domain.js';
+import {migrateAccountModel} from '../data/accounts.js';
 const KEY='saferseas-marina-vue-demo-v1';
 const uid=prefix=>prefix+'-'+(globalThis.crypto?.randomUUID?.()||Math.random().toString(36).slice(2));
 let loaded;try{loaded=JSON.parse(localStorage.getItem(KEY)||'null');}catch{}
-const state=reactive(loaded?.schemaVersion===1?loaded:createSeed());
-const currentUser=computed(()=>{const u=state.users.find(u=>u.id===state.sessionUserId&&u.status==='active');if(!u)return null;const role=state.roles.find(r=>r.id===u.role);return {...u,permissions:role?.permissions||rolePermissions[u.role]||[]};});
+const state=reactive(migrateAccountModel(loaded));
+const currentUser=computed(()=>{const u=state.users.find(u=>u.id===state.sessionUserId&&u.status==='active');if(!u||!Object.hasOwn(rolePermissions,u.role))return null;const role=state.roles.find(r=>r.id===u.role);return {...u,scope:u.role==='investigator'?'all':u.scope,permissions:u.role==='investigator'?rolePermissions.investigator:role?.permissions||rolePermissions[u.role]||[]};});
 const can=(action,event)=>canAccess(currentUser.value,action,event);
 const visibleEvents=computed(()=>state.events.filter(e=>can('read',e)));
 const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify({...state,persistenceError:null}));state.persistenceError=null;return true;}catch{state.persistenceError='Browser storage capacity was exceeded. Changes remain in this session but have not been saved. Export your work before closing this tab.';return false;}};
@@ -38,13 +39,16 @@ function assertCollection(collection,data,existing){
   if(collection==='reports'&&can('report',e)&&!can('investigate',e)&&!can('review',e)&&data.type!=='spot'&&existing?.type!=='spot')throw Error('Investigation reports require an authorized MARINA role.');
 }
 function add(collection,data){
+  if(collection==='roles')throw Error('Only MRO Reporter, MRO Reviewer and MARINA Investigator account types are supported.');
+  if(collection==='users'&&!Object.hasOwn(rolePermissions,data.role))throw Error('Choose one of the three supported account types.');
   if(collection==='reports')return recordReport(data);
   assertCollection(collection,data);const at=new Date().toISOString();const item={...clone(data),id:data.id||uid(collection.slice(0,5)),createdAt:data.createdAt||at};
   if(['vessels','evidence','imports','assessments','exports'].includes(collection)){item.ownerId=item.ownerId||currentUser.value.id;item.createdBy=item.createdBy||currentUser.value.id;item.officeId=item.officeId||currentUser.value.officeId;}
   state[collection].unshift(item);audit('Created '+collection,item.id,item.name||item.title||item.ref||'');return state[collection].find(x=>x.id===item.id);
 }
 function update(collection,id,patch){
-  const item=state[collection]?.find(x=>x.id===id);if(!item)throw Error('Record not found.');assertCollection(collection,patch,item);
+  const item=state[collection]?.find(x=>x.id===id);if(!item)throw Error('Record not found.');if(collection==='users'&&Object.hasOwn(patch,'role')&&!Object.hasOwn(rolePermissions,patch.role))throw Error('Choose one of the three supported account types.');assertCollection(collection,patch,item);
+  if(collection==='roles')patch={...patch,name:roleLabels[id],...(id==='investigator'?{permissions:rolePermissions.investigator,scope:'all'}:{})};
   if(collection==='reports'&&item.status==='issued')throw Error('Issued report revisions are immutable. Create a new revision.');
   const before=clone(item);Object.assign(item,clone(patch),{id,updatedAt:new Date().toISOString()});audit('Updated '+collection,id,{before,after:clone(item)});return item;
 }
@@ -71,10 +75,10 @@ function transition(id,status,remarks=''){
   if(['submitted','resubmitted'].includes(status))state.users.filter(u=>u.role==='reviewer'&&u.status==='active').forEach(u=>notify(u.id,'Report ready for review',next.ref,'/admin/incidents/'+id));return state.events[i];
 }
 function recordReport(data){
-  requireActive();const e=state.events.find(e=>e.id===data.eventId);if(!e||(!can('investigate',e)&&!can('review',e)&&!(data.type==='spot'&&can('report',e))))throw Error('Not authorized to prepare this report.');
+  requireActive();const e=state.events.find(e=>e.id===data.eventId);if(!e||(!can('investigate',e)&&!(data.type==='spot'&&can('report',e))))throw Error('Not authorized to prepare this report.');
   const at=new Date().toISOString(),record={...clone(data),id:data.id||uid('report'),createdBy:currentUser.value.id,createdAt:data.createdAt||at};state.reports=appendReport(state.reports,record);const result=state.reports.find(r=>r.id===record.id);audit('Created report revision',record.id,`${record.type} revision ${result.revision}`);return result;
 }
-function signIn(userId){const user=state.users.find(u=>u.id===userId);if(!user||user.status!=='active')throw Error('This account is not active. Contact your MARINA account administrator.');state.sessionUserId=user.id;user.lastLogin=new Date().toISOString();audit('Signed in',user.id,'Demonstration session');return user;}
+function signIn(userId){const user=state.users.find(u=>u.id===userId);if(!user||user.status!=='active'||!Object.hasOwn(rolePermissions,user.role))throw Error('This account is not active. Contact your MARINA Investigator.');state.sessionUserId=user.id;user.lastLogin=new Date().toISOString();audit('Signed in',user.id,'Demonstration session');return user;}
 function signOut(){if(currentUser.value)audit('Signed out',currentUser.value.id);state.sessionUserId=null;}
 function reset(){const seed=createSeed();Object.keys(state).forEach(k=>delete state[k]);Object.assign(state,seed);persist();}
 const store={state,currentUser,visibleEvents,visibleRecords,can,getEvent:id=>visibleEvents.value.find(e=>e.id===id),saveEvent,transition,add,update,remove,recordReport,recordCase:data=>add('cases',data),recordExport:data=>add('exports',{status:'ready',createdBy:currentUser.value?.id,...data}),selectEvents:s=>filterEvents(visibleEvents.value,s||{}),summarize:summarizeEvents,persist,audit,notify,signIn,signOut,reset,newEvent,newVessel:blankVessel};

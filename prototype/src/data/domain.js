@@ -1,7 +1,8 @@
-export const rolePermissions={reporter:['read','report'],reviewer:['read','report','review','investigate','analyze','export','audit'],enforcement:['read','enforce','analyze','export','audit'],analyst:['read','analyze','export'],admin:['read','report','review','investigate','enforce','analyze','export','manage_accounts','configure','audit','admin']};
+export const roleLabels={reporter:'MRO Reporter',reviewer:'MRO Reviewer',investigator:'MARINA Investigator'};
+export const rolePermissions={reporter:['read','report'],reviewer:['read','review','analyze','export','audit'],investigator:['read','report','review','investigate','enforce','analyze','export','manage_accounts','configure','audit','admin']};
 export const clone=value=>JSON.parse(JSON.stringify(value));
 export function canAccess(user,action,event){
-  if(!user||user.status!=='active')return false;
+  if(!user||user.status!=='active'||!Object.hasOwn(rolePermissions,user.role))return false;
   const permissions=user.permissions||rolePermissions[user.role]||[];
   if(!permissions.includes(action)&&!permissions.includes('admin'))return false;
   if(event){if(user.scope==='own'&&event.ownerId!==user.id)return false;if(user.scope==='office'&&event.officeId!==user.officeId&&event.aor!==user.officeId)return false;}
