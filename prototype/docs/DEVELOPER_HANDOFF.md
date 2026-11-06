@@ -8,6 +8,8 @@ The Vue/Quasar mockup demonstrates the account-only reporting and MARINA adminis
 
 Read the [usability rework](USABILITY_REWORK.md) for the current navigation, task-first screens and deliberately shared operational functions.
 
+**Incident intake:** Keep the existing SAFERSEAS form and its improvements, adding missing MARINA information within the original seven sections. The [incident form additions and data contract](INCIDENT_FORM_ADDITIONS.md) supersede the earlier five-step intake simplification. MAIC is the information/output reference, while detailed investigation work remains in the investigation workspace.
+
 ## Start and review
 
 Use Node 22 or newer. From `prototype/`:

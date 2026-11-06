@@ -11,7 +11,7 @@ The user's final direction was to use the existing SAFERSEAS UI and adjust its e
 | Admin `Dashboard/HomePage/IndexPage.vue` and components | `src/pages/operations/Dashboard.vue`, `visual/` | Original 8/4 composition, image banner, stat cards, coverage, workflow and recent records; API data replaced with fictional counts |
 | Admin `Dashboard/Incidents/IndexPage.vue`, `sections/StatCards.vue`, `sections/IncidentTable.vue` | `src/pages/operations/IncidentRegister.vue`, `visual/RegistryStats.vue` | Source header, filters, split stat cards, table/status rules and mobile cards; MARINA register columns/actions |
 | Reporter `Dashboard/HomePage/IndexPage.vue` and four components | `src/pages/reporter/Dashboard.vue`, `dashboard/` | Original gradient metrics, chart and table composition; data bindings and labels changed for reporter workflow |
-| Reporter `Dashboard/Incidents/Create.vue` | `src/pages/reporter/IncidentForm.vue` | Source completion card/menu, current-step heading, step pill, form card, navigation and scoped CSS; five MARINA steps and multi-vessel fields |
+| Reporter `Dashboard/Incidents/Create.vue` | `src/pages/reporter/IncidentForm.vue` | Source completion card/menu, current-step heading, step pill, form card, navigation and scoped CSS; original seven sections, restored location/weather assistance and additive MAIC fields |
 | Admin `Dashboard/Monitoring/Analytics/IndexPage.vue`, `SelectionSummary.vue`, `AnalyticsFiltersDialog.vue` | `src/pages/data/AnalyticsPage.vue` | Source breadcrumb/actions, notices, numbered tabs, mobile selector, cards and filter overlay; audited measures and shared selection |
 | Admin `Dashboard/Monitoring/GISMap/IndexPage.vue` | `src/pages/data/MapPage.vue` | Source full-height map, tactical filters, map controls and bottom overlay; coordinate-quality review and filtered artifacts |
 
@@ -29,3 +29,5 @@ Browser-local store bindings replace production API/authentication code. Origina
 - [Printed progress-report content](screenshots/progress-print.png)
 
 All preview data is fictional. These show the implemented mockup, not the older React version or the live production repositories.
+
+The original seven-section intake is retained. `IncidentLocation.vue` adapts the original Leaflet picker (click/drag/apply); `IncidentEnvironment.vue` restores weather assistance with explicit suggestions and provenance. The [additive MAIC field contract](INCIDENT_FORM_ADDITIONS.md) describes the new elements.

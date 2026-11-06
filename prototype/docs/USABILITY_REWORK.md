@@ -1,6 +1,6 @@
 # MARINA usability rework
 
-The platform keeps the SAFERSEAS visual language and changes the order in which people encounter work. Familiar layouts, colors, typography, source page components, cards, tables and the five-step report remain. The main change is that the next useful action appears before optional information.
+The platform keeps the SAFERSEAS visual language and changes the order in which people encounter work. Familiar layouts, colors, typography, source page components, cards and tables remain. The original seven-section incident form is restored with MAIC additions; see [incident form additions](INCIDENT_FORM_ADDITIONS.md). The next useful action appears before optional information.
 
 ## The three accounts
 

@@ -8,7 +8,7 @@ import StatusBadge from '../../components/StatusBadge.vue'
 import DataFilters from './DataFilters.vue'
 import { outputCatalogue,buildOutput } from '../../data/catalogue.js'
 import { downloadCSV,downloadXLSX,downloadGeoJSON,printReport } from '../../lib/exports.js'
-import { buildMAICSections,selectReportRevision } from './reportLogic.js'
+import { buildMAICSections,buildSpotSections,selectReportRevision } from './reportLogic.js'
 const store=useDemo(),route=useRoute(),q=useQuasar(),search=ref(''),group=ref('All'),asOf=ref(new Date().toISOString().slice(0,10)),eventId=ref(''),previewJob=ref(null),snapshotOpen=ref(false),busy=ref(false),error=ref(''),template=ref('Demonstration v1'),note=ref('')
 const history=computed(()=>route.path==='/admin/exports'),builder=computed(()=>!!route.params.outputId),output=computed(()=>outputCatalogue.find(o=>o.id===route.params.outputId))
 const selection=computed({get:()=>store.state.selection,set:v=>{store.state.selection=v;store.persist()}})
@@ -47,15 +47,7 @@ const sections=computed(()=>{
  const type={O16:'1B',O17:'2',O18:'3B'}[output.value.id]||'spot'
  const preparedBy=report?.preparedBy||store.state.users.find(u=>u.id===e.ownerId)?.name
  if(type!=='spot')return buildMAICSections({type,event:e,report,asOf:asOf.value,preparedBy,evidence})
- return [
-  {title:'Occurrence and source',content:`Reference: ${e.ref}\nOccurrence: ${e.dateUnknown?'Unknown date':e.date||'Unknown date'} ${e.timeUnknown?'Unknown time':e.time||'Unknown time'}\nPlace: ${e.place||'Unknown'}\n${e.summary||'Unknown'}\nSource: ${e.sourceType||'Unknown'} · ${e.sourceRef||'Unknown'}`},
-  {title:'Involved vessels',content:(e.vessels||[]).map(v=>`${v.name} · ${v.type||'Unknown service'} · Official ${v.officialNumber||'Unknown'} · IMO ${v.imoNumber||'Unknown'} · GT ${v.grossTonnage??'Unknown'} · Owner ${v.owner||'Unknown'} · Operator ${v.operator||'Unknown'}`).join('\n')},
-  {title:'Human and vessel consequences',content:JSON.stringify(e.consequences,(_key,value)=>value==null?'Unknown':value,2)},
-  {title:'Initial actions',content:e.initialActions||'Unknown'},
-  {title:'Recommendations',content:e.recommendations||'Unknown'},
-  {title:'Prepared by / submitting office',content:`Prepared by: ${preparedBy||'Unknown'}\nOffice: ${e.officeId||'Unknown'}\nRevision: ${report?.revision??'No saved report revision'}`},
-  {title:'Preserved spot fields and evidence appendix',content:JSON.stringify({fields:report?.fields||{},evidence},(_key,value)=>value==null?'Unknown':value,2)}
- ]
+ return buildSpotSections({event:e,report,preparedBy,evidence})
 })
 function snapshot(){return {title:output.value.title,subtitle:`${output.value.id} · ${template.value} · Fictional demonstration`,rows:JSON.parse(JSON.stringify(rows.value)),sections:JSON.parse(JSON.stringify(sections.value)),metadata:{'Output family':output.value.id,'Counting grain':output.value.grain,'Selected events':population.value.length,'Vessel involvements':outputPopulation.value.reduce((s,e)=>s+(e.vessels?.length||0),0),'As of':asOf.value,Selection:JSON.stringify(selection.value),Template:template.value,Notes:note.value||output.value.notes},events:JSON.parse(JSON.stringify(outputPopulation.value))}}
 function svgFor(snap){const values=snap.rows.slice(0,16).map(r=>({label:r.Category || r.Reference || 'Event',value:Number(r.Total??r.Count??r.Events??1)})); const max=Math.max(1,...values.map(r=>r.value)),esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));return `<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="${150+values.length*36}" viewBox="0 0 1100 ${150+values.length*36}"><rect width="100%" height="100%" fill="white"/><g font-family="Arial" fill="#1a365d"><text x="24" y="32" font-size="21">${esc(snap.title)}</text><text x="24" y="58" font-size="12">Fictional demonstration · ${esc(snap.metadata['As of'])} · ${esc(snap.metadata['Counting grain'])} · Full table supplied separately</text>${values.map((r,i)=>`<text x="24" y="${100+i*36}" font-size="12">${esc(r.label)}</text><rect x="270" y="${84+i*36}" width="${r.value/max*720}" height="24" fill="#2b6cb0"/><text x="${1000}" y="${100+i*36}" font-size="12">${r.value}</text>`).join('')}</g></svg>`}

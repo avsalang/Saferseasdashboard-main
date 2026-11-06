@@ -1,4 +1,35 @@
-# Verification — usability rework
+# Verification — SAFERSEAS intake additions
+
+Verified on 6 November 2026. The existing seven-section incident form is retained with additive MARINA fields and digital location/weather assistance. Desktop is the priority.
+
+| Current check | Result |
+|---|---|
+| Unit/regression suite | 61 passed, including 19 weather and 9 incident-to-output regressions |
+| Production build | Passed |
+| Live provider smoke | Recent and historical weather/sea endpoints returned matched-hour data for a fictional Philippine position (5 November 2026 and 15 June 2025) |
+| Route acceptance | 55 checks; no browser exceptions, horizontal overflow or missing headings |
+| Original intake and added fields | Passed: seven sections, voyage/cargo, timeline, response, findings, source notes; save, reopen and review; confirmed zero and unknown retained |
+| Map/weather/attachments | Passed: actual Leaflet map click, applied zero coordinates, guarded lookup, separate per-value model provenance, manual edits, stable lookup after first save, three-file metadata |
+| Correction workflows | Reporter and reviewer-authored journeys both passed, 18 checks each |
+| Investigator/admin journey | 19 checks passed, including issued report amendments, cases, import/reversal, output history and accounts |
+| Reports | 22 usability checks passed; existing output families, explicit incident choice and immutable snapshots |
+| Independent review | Six findings resolved; nine output/snapshot regressions independently rerun; no remaining release blocker from the bounded review |
+
+Weather browser checks use deterministic provider responses to exercise success and provenance. Unit checks additionally cover unavailable/partial responses, invalid dates, timezone boundaries and racing requests. External provider availability is not guaranteed by these tests. Files remain metadata-only in this demonstration.
+
+Run the new desktop checks from `prototype/`:
+
+```sh
+node tests/intake-additions.mjs
+node tests/intake-assistance.mjs
+```
+
+`npm test` includes the new weather and output-mapping regressions. See [incident form additions](INCIDENT_FORM_ADDITIONS.md) for the accepted direction, field contract and production boundaries.
+
+## Prior usability release evidence
+
+The following records the preceding usability release; its five-step intake and compact intake measurements are superseded by the restored seven-section form above.
+
 
 Verified on 6 November 2026 against the Vue/Quasar mockup and fictional data. Source UI and styling remain SAFERSEAS; task ordering, optional details and navigation were simplified.
 
