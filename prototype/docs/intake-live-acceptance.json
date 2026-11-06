@@ -1,0 +1,35 @@
+{
+  "sourceCommit": "13d7281d125a9a32539905da56315642d9d4fdc8",
+  "workflowRun": 42165951606,
+  "workflowConclusion": "success",
+  "site": "https://avsalang.github.io/Saferseasdashboard-main/",
+  "date": "2026-11-06",
+  "unitTests": 61,
+  "routeChecks": 55,
+  "reporterCorrectionChecks": 18,
+  "reviewerCorrectionChecks": 18,
+  "adminJourneyChecks": 19,
+  "reportsChecks": 22,
+  "liveDesktopJourneys": {
+    "intake-additions": "passed",
+    "intake-assistance": "passed"
+  },
+  "liveAssertions": [
+    "original seven sections",
+    "added fields persist after save/reopen",
+    "confirmed zero and unknown values distinct",
+    "actual Leaflet map click and coordinate application",
+    "manual/modelled weather provenance",
+    "lookup remains valid through first save",
+    "three-file attachment metadata persists",
+    "manual edit removes per-value model attribution",
+    "no browser page exceptions"
+  ],
+  "independentReview": "six findings resolved; nine mapping regressions independently passed",
+  "realWeatherProbe": {
+    "recentDate": "2026-11-05",
+    "historicalDate": "2025-06-15",
+    "weather": "matched hour returned for both",
+    "marine": "matched hour returned for both"
+  }
+}

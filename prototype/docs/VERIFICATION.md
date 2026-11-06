@@ -26,6 +26,12 @@ node tests/intake-assistance.mjs
 
 `npm test` includes the new weather and output-mapping regressions. See [incident form additions](INCIDENT_FORM_ADDITIONS.md) for the accepted direction, field contract and production boundaries.
 
+## Published intake release
+
+Published application source: [`13d7281`](https://github.com/avsalang/Saferseasdashboard-main/commit/13d7281d125a9a32539905da56315642d9d4fdc8). [GitHub build and Pages deployment](https://github.com/avsalang/Saferseasdashboard-main/actions/runs/42165951606) succeeded. Both new desktop journeys were rerun against the hosted site and passed, including map coordinate input and retained weather provenance. [Recorded live acceptance](intake-live-acceptance.json).
+
+The original three production repositories remain unchanged. This release updates the dedicated mockup repository.
+
 ## Prior usability release evidence
 
 The following records the preceding usability release; its five-step intake and compact intake measurements are superseded by the restored seven-section form above.

@@ -14,7 +14,7 @@
 - [x] Restore map picking and date/location weather assistance. Preserve manual observations, distinguish model suggestions, handle partial errors and stale requests. Add null/zero and date/time tests.
 - [x] Add missing fields for locations, propulsion/registry, rescue, sources, consequence allocations and optional MAIC details. Save and display all fields, including after reopening.
 - [x] Map new fields to report drafts and supplemental export columns with source context; never promote preliminary causes to established conclusions automatically.
-- [ ] Verify unit tests, desktop intake journey, correction cycle, build and independent review; update developer handoff, publish to the authorized GitHub Pages repository, verify live.
+- [x] Verify unit tests, desktop intake journey, correction cycle, build and independent review; update developer handoff, publish to the authorized GitHub Pages repository, verify live.
 
 ## Review focus
 
@@ -23,3 +23,5 @@
 - Changed occurrence details must invalidate pending weather suggestions, preserving user entries.
 - Existing saved incidents and issued revisions must retain their meaning and remain usable.
 - Optional investigation fields must not prevent early submission; source categories and office responsibilities remain distinct.
+
+Completion: application source `13d7281`, Pages run `42165951606` successful; both new desktop journeys passed against the live hosted site. See `prototype/docs/VERIFICATION.md`.
