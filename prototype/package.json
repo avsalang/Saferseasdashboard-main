@@ -23,6 +23,7 @@
     "@quasar/vite-plugin": "1.9.0",
     "@vitejs/plugin-vue": "5.2.4",
     "playwright": "1.62.1",
+    "sass": "1.93.2",
     "sass-embedded": "1.93.2",
     "vite": "6.4.5"
   },
