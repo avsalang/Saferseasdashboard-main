@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-06",
+  "url": "https://avsalang.github.io/Saferseasdashboard-main/",
+  "applicationCommit": "3d40e5b16013dcc66e76945ff20c23d03fb3f1b9",
+  "workflowRun": "https://github.com/avsalang/Saferseasdashboard-main/actions/runs/42182319785",
+  "deployment": "success",
+  "local": {
+    "unitTestsPassed": 106,
+    "routeChecksPassed": 55,
+    "build": "passed",
+    "reporterCorrectionChecksPassed": 18,
+    "reviewerCorrectionChecksPassed": 18,
+    "rolesChecksPassed": 23,
+    "reportUsabilityChecksPassed": 22,
+    "mapWeather": "passed",
+    "workingCopyExports": "passed"
+  },
+  "hosted": [
+    {
+      "script": "tests/dropdowns-flat-form.mjs",
+      "result": "passed",
+      "covers": [
+        "no collapsed incident sections",
+        "no separate required-information panel",
+        "MARINA category persistence",
+        "unlisted owner and port commit on blur"
+      ]
+    },
+    {
+      "script": "tests/required-fields.mjs",
+      "result": "passed",
+      "covers": [
+        "missing facts block submission",
+        "partial drafts",
+        "field-local reasons",
+        "source N/A size classification with reason",
+        "unknown/zero and spot snapshots"
+      ]
+    },
+    {
+      "script": "src/pages/operations/reportRequirements.browser.mjs",
+      "result": "passed",
+      "checksPassed": 23,
+      "browserErrors": []
+    }
+  ],
+  "productionRepositoriesModified": false,
+  "data": "Fictional browser records only; no source incident identities published."
+}

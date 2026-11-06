@@ -39,6 +39,10 @@ node tests/browser.mjs
 
 Set `CHROME_PATH` for system Chrome. Workflow browser outputs remain in ignored `test-artifacts/`.
 
+## Published dropdown and visible-section release
+
+Published application source: [`3d40e5b`](https://github.com/avsalang/Saferseasdashboard-main/commit/3d40e5b16013dcc66e76945ff20c23d03fb3f1b9). [GitHub build and Pages deployment](https://github.com/avsalang/Saferseasdashboard-main/actions/runs/42182319785) succeeded. All three hosted checks passed: source dropdown/blur persistence and flat form, required incident fields including reasoned N/A size classification and spot snapshot, and the 23-check investigation/case/receipt journey. [Recorded hosted acceptance](dropdowns-live-acceptance.json).
+
 ## Earlier field-policy verification
 
 
