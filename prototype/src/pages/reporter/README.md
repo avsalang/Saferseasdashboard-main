@@ -1,5 +1,15 @@
 # Reporter module
 
+## Usability update
+
+Corrections and saved drafts now lead the reporting desk, using all permitted records across years so unfinished older work stays visible. The familiar compact record table provides tracking next. Original source metric/chart components remain available under “Reporting overview and charts,” with a reporting-year selector. Drafts and evidence/document metadata have direct dashboard and report-list links.
+
+The Occurrence step starts with date/time, type, place and factual account. Classification/impacts, positions, office relationships and response/recommendations are named optional sections. The read-only issued identity remains available in Reporting account. Every original field label/model value is retained. Advanced vessel sections start collapsed and omit the six basic fields already shown above them. “Steps reviewed” describes visited sections; it does not imply that a report has passed submission validation.
+
+Draft creation displays a global success message after its new-to-edit route change; subsequent draft saves display an inline confirmation. The report detail keeps ordinary submit/correction tracking and adds contextual Investigation, Review report, and Cases and orders links whenever permitted, regardless of the reporting/staff presentation. Shared permissions, ownership/office scope and navigation are owned by the integration module; operational overlap is intentional.
+
+Verification for this update: 11 reporter Vue SFCs compile. The actual browser intake/correction cycle passes 28 checks, including optional data retention, null consequence counts, evidence, revisions, history, saved feedback and contextual operational links. Separate responsive checks pass at 390px and confirm the source charts still open. Screenshots and scripts are under the parent workspace `_working/mockup_qa` and `_working/qa_reporter_usability_*.mjs`. No full build, dependency changes or publishing is performed by this module.
+
 ## Existing frontend reuse
 
 The reporting dashboard directly reuses the template and scoped CSS from the existing `saferseas-frontend-public/src/pages/Dashboard/HomePage/IndexPage.vue` and its `StatsCards`, `DashboardCharts`, `SeverityAnalysis` and `RecentIncidents` components. The local copies are in `dashboard/`. The navy gradient metric, original card typography, three ECharts panels, year/month controls, desktop/mobile recent-record views and panel grid are retained. Data is derived from scoped local events. An actual correction-request count replaces the original unsupported safety score; validated status replaces the source resolved-status series. Seriousness uses the specified canonical categories.

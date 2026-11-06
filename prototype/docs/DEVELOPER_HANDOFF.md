@@ -6,6 +6,8 @@ The Vue/Quasar mockup demonstrates the account-only reporting and MARINA adminis
 
 **Source:** `prototype/`. The repository's earlier React mockup remains in the root source directories. The three production repositories were not modified.
 
+Read the [usability rework](USABILITY_REWORK.md) for the current navigation, task-first screens and deliberately shared operational functions.
+
 ## Start and review
 
 Use Node 22 or newer. From `prototype/`:
@@ -21,8 +23,8 @@ Open the address printed by Vite. Select a demonstration role on the sign-in pag
 
 | Role | Issued demo email | Access |
 |---|---|---|
-| MRO Reporter | reporter@example.org | Own incident intake, drafts, submissions, corrections and source metadata |
-| MRO Reviewer | reviewer@example.org | Regional report review, validation/corrections, scoped analysis and outputs |
+| MRO Reporter | reporter@example.org | Own/assigned records with reporting, review, investigation, cases and outputs; usual focus is reporting |
+| MRO Reviewer | reviewer@example.org | Regional records with reporting, review, investigation, cases and outputs; usual focus is review |
 | MARINA Investigator | investigator@example.org | All functions across offices: review, investigations, cases, outputs, accounts, roles, configuration, audit and settings |
 
 Sign out to change roles. Changes persist in local browser storage. **Reset demo** on the sign-in page restores fictional seed records. Each browser has a separate dataset. No MARINA source records, evidence files or credentials are included.
@@ -58,7 +60,7 @@ See [screen and output coverage](SCREEN_OUTPUT_COVERAGE.md), [domain contract](.
 
 ## Confirmed account model
 
-Only these three account types are supported. MRO Reporter defaults to own records; MRO Reviewer defaults to the assigned regional office/AOR. MARINA Investigator has all functions and all-office scope, including account issuance and configuration. Investigation assignment selects MARINA Investigator accounts. Separate Administrator, Analyst, Enforcement Officer and combined Investigator/Reviewer accounts are removed. The older five-role mockup is superseded; upgrading it preserves records and historical attribution while suspending the retired demo accounts.
+Only these three account types are supported. Operational functions intentionally overlap across all three types for now, as requested by the user. MRO Reporter defaults to own/assigned records; MRO Reviewer defaults to the assigned regional office/AOR. MARINA Investigator has all functions and all-office scope, including account issuance and configuration. Investigation assignment supports all three operational account types. Separate Administrator, Analyst, Enforcement Officer and combined Investigator/Reviewer accounts are removed. The older five-role mockup is superseded; upgrading it preserves records and historical attribution while suspending the retired demo accounts.
 
 ## Data rules to preserve
 
@@ -107,10 +109,13 @@ npx playwright install chromium
 npm run test:browser
 node tests/reporter-journey.mjs
 node tests/admin-journey.mjs
+node tests/role-access.mjs
+node tests/reviewer-corrections.mjs
+node tests/reports-ux.mjs
 ```
 
 Keep `npm run dev` running for browser tests. Set `CHROME_PATH` to a system Chrome executable if using that instead of Playwright's browser. Browser artifacts are written to ignored `test-artifacts/`. The route test imports development route metadata and is intended for the local Vite server. See [verification record](VERIFICATION.md) for the delivered run evidence.
 
 ## MARINA decisions before production
 
-Confirm role/office scopes; official form masters and signatories; source snapshots and reconciliation/counting rules for each recurring output; report timeliness basis; GT bands and age reference date; authoritative AOR geometry and spatial methods; risk method; requiredness/unknown handling; retention and sharing/export authority.
+Confirm final role/office scopes and approval rules after the temporary operational overlap; official form masters and signatories; source snapshots and reconciliation/counting rules for each recurring output; report timeliness basis; GT bands and age reference date; authoritative AOR geometry and spatial methods; risk method; requiredness/unknown handling; retention and sharing/export authority.

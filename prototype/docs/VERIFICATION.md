@@ -1,26 +1,25 @@
-# Verification record
+# Verification — usability rework
 
-Verified on 6 November 2026 using Node 24, the locked Vue/Quasar dependencies, Playwright and system Chrome. All test records are fictional.
+Verified on 6 November 2026 against the Vue/Quasar mockup and fictional data. Source UI and styling remain SAFERSEAS; task ordering, optional details and navigation were simplified.
 
 | Check | Result |
 |---|---|
-| `npm test` | 24 passed, 0 failed |
-| `npm run build` | Production build passed |
-| `npm run test:browser` | 55 route/permission/mobile checks; no page exceptions or viewport overflow; no missing page headings |
-| `node tests/reporter-journey.mjs` | 18 checks passed: multi-vessel draft, decimals, nullable counts, evidence, submission, correction, resubmission, validation and attributed history |
-| `node tests/admin-journey.mjs` | 19 checks passed: issued MAIC/amendments, progress/final checklists, printable saved progress, SCO/case, blocked/confirmed/reversed import, full-selection CSV/history, issued invitation/activation/suspension |
-| `node tests/coverage.mjs` | 49 unique screen IDs through 50 routes; 22 output families |
-| Dependency installation/audit | 0 reported vulnerabilities in the current prototype dependency tree |
-| Production repository checks | Backend/admin/reporter working trees unchanged |
+| Unit/regression suite | 33 passed; counting/unknowns, exports, role migration/limits, overlap, history, queue sorting |
+| Production build | Passed |
+| Route/desktop/mobile acceptance | 55 checks; no page exceptions, viewport overflow or missing headings |
+| Reporter correction cycle | 18 checks passed |
+| Investigator/admin journeys | 19 checks passed, including MAIC issue/amendment, progress/final fields, cases, import/reversal, outputs and issued accounts |
+| Three-role access | 23 checks passed, including overlapping operational functions and central-only controls |
+| Reviewer-authored correction cycle | 18 checks passed; real notification navigation, correct editor/resubmit, evidence/ownership/revisions and scoped vessel picker |
+| Reports usability | 22 checks passed; all 22 families, grouped search, essential/advanced filters, explicit incident choice, full snapshots and exact re-download |
+| Intermediate viewport checks | 16 checks across 390/768/1024/1280px; no horizontal overflow or exceptions |
+| Compact intake | 9 browser checks; first date input at y=388 on 390×844, y=418 on 1366×768; all essential occurrence fields fit the first mobile screen |
+| Coverage | 49 specified IDs, 50 routes, 22 output families |
 
-See [compact acceptance results](acceptance-results.json), [coverage](SCREEN_OUTPUT_COVERAGE.md) and [implemented previews](EXISTING_UI_REUSE.md). Browser route probes cover desktop views, six main admin views at 390px, reporter mobile intake and reporter denial from staff account management. Additional source-component checks covered reporter navigation from 390–1440px and the source form completion menu.
+[Compact acceptance results](acceptance-results.json) records the concrete checks. Commands are in [Developer handoff](DEVELOPER_HANDOFF.md). An independent source review found five material account/workflow/scope issues; all five were fixed and the bounded follow-up review found no remaining blocker.
 
-The tests verify local prototype behavior. They do not establish backend authorization, real file/email processing, official form approval, an approved risk method or correctness of rules MARINA has not provided. Map basemaps need external tile access; exported point data and unknown-location accounting remain explicit. PDF actions use browser print/save, not a server PDF job.
+The three confirmed account types are MRO Reporter, MRO Reviewer and MARINA Investigator. Operational overlap is intentional for now. Regional roles cannot obtain central account/configuration/audit powers through role edits or persisted settings. Older browser state upgrades to schema 3 without deleting records and historical attribution.
 
-## Published build
+Tests establish mockup behavior, not backend security, official MARINA approval, real upload/email processing, approved risk/legal rules or signed official forms. PDF remains browser print/save. All supplied MARINA files remain outside this public demonstration.
 
-[GitHub Pages deployment 42156571634](https://github.com/avsalang/Saferseasdashboard-main/actions/runs/42156571634) passed its clean install, 24 regression tests, production build and deployment. App source: `b5d841c1637d277a037d1644327d29025dd6eb8b`.
-
-[Live demonstration](https://avsalang.github.io/Saferseasdashboard-main/) passed 18 published-build checks: root 200, original admin banner/reporter card/form completion panel, five staff routes, repository-subpath hash refresh, 390px form and reporter denial from account administration. No page exceptions. See [live acceptance results](live-acceptance-results.json).
-
-The first hosted install identified an unpinned Sass peer absent from the lockfile. Sass 1.93.2 is now an explicit locked dependency; a fresh local `npm ci`, tests/build and the hosted clean install all pass.
+The previous version was published and checked. Deployment and live checks for this usability revision are recorded below after publication.

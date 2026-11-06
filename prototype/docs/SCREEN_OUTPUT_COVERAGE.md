@@ -6,20 +6,20 @@ The application covers **49 specified screen IDs** through 50 route entries. Som
 
 | Screen | View | Route | Access |
 |---|---|---|---|
-| A01 | Operations overview | /admin | admin, reviewer, enforcement, analyst |
-| A02 | Incident register | /admin/incidents | admin, reviewer, enforcement, analyst |
-| A03 | Incident workspace | /admin/incidents/:id | admin, reviewer, enforcement, analyst |
-| A04 | New incident | /admin/incidents/new | review |
+| A01 | Operations overview | /admin | reporter, reviewer, investigator |
+| A02 | Incident register | /admin/incidents | reporter, reviewer, investigator |
+| A03 | Incident workspace | /admin/incidents/:id | reporter, reviewer, investigator |
+| A04 | New incident | /admin/incidents/new | report |
 | A04 | Edit incident | /admin/incidents/:id/edit | review |
 | A05 | Review queue | /admin/review | review |
 | A06 | Investigations | /admin/investigations | investigate |
 | A07–A09 | Investigation workbench | /admin/investigations/:id | investigate |
-| A10 | Recommendation follow-up | /admin/actions | admin, reviewer, enforcement, analyst |
+| A10 | Recommendation follow-up | /admin/actions | reporter, reviewer, investigator |
 | A11 | Enforcement cases | /admin/cases | enforce |
 | A12 | Enforcement case | /admin/cases/:id | enforce |
-| A13 | Vessel registry | /admin/vessels | admin, reviewer, enforcement, analyst |
-| A14 | Owners and operators | /admin/companies | admin, reviewer, enforcement, analyst |
-| A15 | Evidence register | /admin/documents | admin, reviewer, enforcement, analyst |
+| A13 | Vessel registry | /admin/vessels | reporter, reviewer, investigator |
+| A14 | Owners and operators | /admin/companies | reporter, reviewer, investigator |
+| A15 | Evidence register | /admin/documents | reporter, reviewer, investigator |
 | D01 | Import batches | /admin/imports | analyze |
 | D02 | Import wizard | /admin/imports/new | analyze |
 | D03 | Import detail | /admin/imports/:id | analyze |
@@ -27,9 +27,9 @@ The application covers **49 specified screen IDs** through 50 route entries. Som
 | D04 | GIS workspace | /admin/map | analyze |
 | D05 | Location review | /admin/locations | investigate |
 | D06 | Analytics | /admin/analytics | analyze |
-| D07 | Report catalogue | /admin/reports | export |
-| D08 | Report builder | /admin/reports/build/:outputId | export |
-| D09 | Export history | /admin/exports | export |
+| D07 | Reports | /admin/reports | export |
+| D08 | Prepare report | /admin/reports/build/:outputId | export |
+| D09 | Generated files | /admin/exports | export |
 | D10 | Assessment detail | /admin/risk/:id | analyze |
 | D10 | Risk assessments | /admin/risk | analyze |
 | D11 | Policy review | /admin/policy | analyze |

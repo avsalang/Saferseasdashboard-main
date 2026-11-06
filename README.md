@@ -6,6 +6,8 @@ An interactive Vue/Quasar developer reference for MARINA-issued reporting accoun
 
 Choose MRO Reporter, MRO Reviewer or MARINA Investigator on the sign-in page. Demo password: `Demo2026!`. All records are fictional; changes are stored in your browser. The public Pages URL hosts a design demonstration. The intended production platform requires accounts issued by MARINA and has no public interface or self-registration.
 
+Operational functions intentionally overlap across the three account types for now. Each has a task-focused starting page; central account/configuration/audit controls remain with MARINA Investigator. See the [usability rework](prototype/docs/USABILITY_REWORK.md).
+
 ## Run the current mockup
 
 ```sh

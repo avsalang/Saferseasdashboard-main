@@ -28,6 +28,7 @@
             <span>{{ item.label }}</span>
           </router-link>
 
+          <q-btn-dropdown flat no-caps class="header-nav-item" icon="work_outline" label="Work tools" dropdown-icon="expand_more" aria-label="Work tools"><q-list style="min-width:240px"><q-item v-for="tool in workTools" :key="tool.to" clickable v-close-popup :to="tool.to"><q-item-section avatar><q-icon :name="tool.icon"/></q-item-section><q-item-section>{{tool.label}}</q-item-section></q-item></q-list></q-btn-dropdown>
           <!-- Vertical Separator Divider -->
           <div v-if="visibleNavItems.length > 0" class="nav-separator"></div>
 
@@ -148,6 +149,7 @@
                 :class="{ 'mmo-item--active': isNavItemActive(item) }" @click="mobileMenuOpen = false">
                 {{ item.label }}
               </router-link>
+              <div class="mmo-separator"/><div class="text-caption text-grey-6 q-px-md q-py-sm">Work tools</div><router-link v-for="tool in workTools" :key="tool.to" :to="tool.to" class="mmo-item" @click="mobileMenuOpen=false">{{tool.label}}</router-link>
               <div class="mmo-separator" />
               <router-link to="/help" class="mmo-item mmo-item-home" @click="mobileMenuOpen = false">
                 Help and workflow
@@ -195,6 +197,7 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useDemo } from '../stores/demo.js'
+import {reporterWorkTools} from '../data/navigation.js'
 const router = useRouter(), route = useRoute(), store = useDemo()
 const $q = useQuasar(), showDesktopNav = computed(() => $q.screen.width >= 1260)
 const logo = import.meta.env.BASE_URL + 'reporter-logo.png'
@@ -206,12 +209,11 @@ const userDisplayName = computed(() => getUser.value?.name || 'Issued reporter')
 const userInitials = computed(() => userDisplayName.value.trim().split(/\s+/).map(part => part[0]).slice(0, 2).join('').toUpperCase())
 const unreadCount = computed(() => store.state.notifications.filter(item => item.userId === getUser.value?.id && !item.read).length)
 const timeGreeting = computed(() => { const hour = new Date().getHours(); return hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening' })
+const workTools=reporterWorkTools
 const visibleNavItems = [
   { label: 'Dashboard', icon: 'grid_view', to: '/reporter' },
   { label: 'My reports', icon: 'warning_amber', to: '/reporter/reports' },
-  { label: 'Drafts', icon: 'edit_note', to: '/reporter/drafts' },
   { label: 'Vessels', icon: 'directions_boat', to: '/reporter/vessels' },
-  { label: 'Documents', icon: 'folder_open', to: '/reporter/documents' }
 ]
 function isNavItemActive(item) { return item.to === '/reporter' ? route.path === '/reporter' : route.path === item.to || route.path.startsWith(item.to + '/') }
 function handleScroll() { isScrolled.value = window.scrollY > 20 }
@@ -813,6 +815,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   padding: 8px 24px;
   transition: all 0.2s ease;
 }
+.mmo-card{max-height:calc(100dvh - 100px);overflow:auto}
 </style>
 <style>
 .header-user-dropdown .q-btn-dropdown__arrow,
@@ -828,4 +831,5 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   opacity: 0 !important;
   pointer-events: none !important;
 }
+.mmo-card{max-height:calc(100dvh - 100px);overflow:auto}
 </style>

@@ -1,0 +1,5 @@
+<script setup>
+defineProps({definitions:{type:Array,required:true},values:{type:Object,required:true},editable:Boolean})
+</script>
+<template><div class="form-grid"><template v-for="f in definitions" :key="f.key"><section v-if="f.type==='checks'" class="span-2"><div class="text-weight-medium q-mb-sm">{{f.label}}</div><q-option-group :model-value="values[f.key]||[]" @update:model-value="values[f.key]=$event" :options="f.options.map(o=>typeof o==='string'?{label:o,value:o}:o)" type="checkbox" inline :disable="!editable"/></section><q-input v-else v-model="values[f.key]" :class="f.type==='textarea'?'span-2':''" outlined :type="f.type" :min="f.type==='number'?0:undefined" :step="f.type==='number'?1:undefined" :label="f.label" :stack-label="['date','time'].includes(f.type)" :autogrow="f.type==='textarea'" :readonly="!editable"/></template></div></template>
+<style scoped>.form-grid{min-width:0}.form-grid>section{min-width:0}.form-grid :deep(.q-option-group){display:flex;flex-wrap:wrap;gap:4px 0}.form-grid :deep(.q-checkbox__label){overflow-wrap:anywhere}@media(max-width:599px){.form-grid :deep(.q-checkbox){max-width:100%}}</style>

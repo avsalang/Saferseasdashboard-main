@@ -8,7 +8,7 @@
       :width="280"
       :mini-width="72"
       :mini="miniState"
-      mini-to-overlay
+      :mini-to-overlay="!navigationPinned"
       class="sidebar-v2"
       @mouseenter="miniState = false"
       @mouseleave="onMouseOut"
@@ -21,7 +21,7 @@
             </q-avatar>
             <div class="column">
               <div class="text-subtitle1 text-weight-bold text-primary brand-name" style="line-height: 1.1;">SAFER<span style="color: #465f88;">SEAS</span></div>
-              <div class="text-caption text-weight-bold text-uppercase" style="letter-spacing: 2px; font-size: 8px; color: #465f88; line-height: 1.1; margin-top: 2px;">Admin Command</div>
+              <div class="text-caption text-weight-bold text-uppercase" style="letter-spacing: 2px; font-size: 8px; color: #465f88; line-height: 1.1; margin-top: 2px;">MARINA Workspace</div>
             </div>
           </div>
         </div>
@@ -32,6 +32,7 @@
           </q-avatar>
         </div>
 
+        <div v-if="!miniState" class="row justify-end q-px-md q-pb-xs"><q-btn flat round dense size="sm" :icon="navigationPinned?'push_pin':'vertical_align_center'" :aria-label="navigationPinned?'Collapse menu':'Keep menu open'" @click="navigationPinned=!navigationPinned;miniState=!navigationPinned"><q-tooltip>{{navigationPinned?'Collapse menu':'Keep menu open'}}</q-tooltip></q-btn></div>
         <q-scroll-area class="col relative-position">
           <q-list class="q-px-md nav-list">
             <template v-for="item in filteredNavItems" :key="item.label">
@@ -300,24 +301,19 @@
   </q-layout>
 </template>
 <script setup>
-import{computed,ref}from'vue';import{useRoute,useRouter}from'vue-router';import{useQuasar}from'quasar';import{useDemo}from'../stores/demo.js';import StatusBadge from'../components/StatusBadge.vue';import{roleLabels}from'../data/domain.js';
-const store=useDemo(),route=useRoute(),router=useRouter(),$q=useQuasar(),leftDrawerOpen=ref($q.screen.gt.sm),miniState=ref(true),searchOpen=ref(false),search=ref('');
+import{computed,ref}from'vue';import{useRoute,useRouter}from'vue-router';import{useQuasar}from'quasar';import{useDemo}from'../stores/demo.js';import StatusBadge from'../components/StatusBadge.vue';import{roleLabels}from'../data/domain.js';import{navigationFor}from'../data/navigation.js';
+const store=useDemo(),route=useRoute(),router=useRouter(),$q=useQuasar(),leftDrawerOpen=ref($q.screen.gt.sm),miniState=ref(false),navigationPinned=ref(true),searchOpen=ref(false),search=ref('');
 const user=computed(()=>store.currentUser.value),isReporter=computed(()=>false),isDark=computed(()=>$q.dark.isActive),profilePictureUrl=null;
 const currentPageTitle=computed(()=>route.meta.title||'SAFERSEAS'),currentPageSubtitle=computed(()=>`${user.value?.officeId||'MARINA'} · ${roleLabels[user.value?.role]||''} · Fictional demonstration`);
 const sortedNotifications=computed(()=>store.state.notifications.filter(n=>n.userId===user.value?.id).map(n=>({...n,desc:n.message}))),unreadCount=computed(()=>sortedNotifications.value.filter(n=>!n.read).length);
 const greetingMessage=new Date().getHours()<12?'Good morning':new Date().getHours()<18?'Good afternoon':'Good evening';
 const searchRows=computed(()=>store.selectEvents({search:search.value}).slice(0,12));
-function onMouseOut(){miniState.value=true}function toggleLeftDrawer(){leftDrawerOpen.value=!leftDrawerOpen.value;miniState.value=false}function isActiveGroup(item){return item.children?.some(x=>x.children?isActiveGroup(x):route.path===x.to||route.path.startsWith(x.to+'/'))}
+function onMouseOut(){if(!navigationPinned.value)miniState.value=true}function toggleLeftDrawer(){leftDrawerOpen.value=!leftDrawerOpen.value;miniState.value=false}function isActiveGroup(item){return item.children?.some(x=>x.children?isActiveGroup(x):route.path===x.to||route.path.startsWith(x.to+'/'))}
 function markAllRead(){store.state.notifications.filter(n=>n.userId===user.value?.id).forEach(n=>n.read=true);store.persist()}
 function handleNotificationClick(n){const original=store.state.notifications.find(x=>x.id===n.id);if(original)original.read=true;router.push(n.link||'/notifications')}
 function logout(){store.signOut();router.push('/login')}
-const item=(label,to,icon,permission)=>({label,to,icon,permission});
-const navigation=computed(()=>{
-  if(isReporter.value)return[{label:'Reporting',items:[item('Overview','/reporter','space_dashboard'),item('My reports','/reporter/reports','description'),item('Draft reports','/reporter/drafts','edit_note'),item('New incident','/reporter/reports/new','add_circle_outline'),item('Vessel directory','/reporter/vessels','directions_boat'),item('Documents','/reporter/documents','folder_open')]},{label:'Your workspace',items:[item('Notifications','/notifications','notifications_none'),item('My account','/profile','person_outline'),item('Help & workflow','/help','help_outline'),item('Developer handoff','/handoff','integration_instructions')]}];
-  const groups=[{label:'Operations',items:[item('Overview','/admin','space_dashboard'),item('Incident register','/admin/incidents','description'),item('Review queue','/admin/review','fact_check','review'),item('Investigations','/admin/investigations','travel_explore','investigate'),item('Recommendations','/admin/actions','checklist','investigate'),item('Enforcement cases','/admin/cases','gavel','enforce')]},{label:'Intelligence & reporting',items:[item('GIS workspace','/admin/map','map','analyze'),item('Analytics','/admin/analytics','query_stats','analyze'),item('Report catalogue','/admin/reports','summarize','export'),item('Exports & issued reports','/admin/exports','download','export'),item('Historical imports','/admin/imports','upload_file','analyze'),item('Reconciliation','/admin/reconciliation','difference','analyze'),item('Location review','/admin/locations','pin_drop','investigate'),item('Risk assessments','/admin/risk','shield','analyze'),item('Policy review','/admin/policy','policy','analyze')]},{label:'Registry',items:[item('Vessels','/admin/vessels','directions_boat'),item('Owners & operators','/admin/companies','business'),item('Evidence register','/admin/documents','folder_open')]},{label:'Administration',items:[item('Account management','/admin/accounts','manage_accounts','manage_accounts'),item('Roles & permissions','/admin/roles','admin_panel_settings','configure'),item('MARINA offices','/admin/offices','account_balance','configure'),item('Reference data','/admin/reference-data','category','configure'),item('Workflow & templates','/admin/workflows','account_tree','configure'),item('Audit trail','/admin/audit','history','audit'),item('System settings','/admin/settings','settings','configure')]},{label:'Support',items:[item('My account','/profile','person_outline'),item('Help & workflow','/help','help_outline'),item('Developer handoff','/handoff','integration_instructions')]}];return groups.map(g=>({...g,items:g.items.filter(i=>!i.permission||store.can(i.permission))})).filter(g=>g.items.length);
-});
-
-const filteredNavItems=computed(()=>[{label:'Dashboard',to:'/admin',icon:'dashboard'},...navigation.value.map(g=>({label:g.label,icon:g.items[0]?.icon||'folder',children:g.items.filter(x=>x.to!=='/admin')})).filter(g=>g.children.length)]);
+const navigation=computed(()=>navigationFor(store.can));
+const filteredNavItems=computed(()=>[{label:user.value?.role==='reporter'?'Reporting desk':'Dashboard',to:user.value?.role==='reporter'?'/reporter':'/admin',icon:'dashboard'},...navigation.value.map(g=>({label:g.label,icon:g.icon,children:g.items})),{label:'Help & guidance',icon:'help_outline',to:'/help'}]);
 </script>
 <style scoped>
 .sidebar-v2 {

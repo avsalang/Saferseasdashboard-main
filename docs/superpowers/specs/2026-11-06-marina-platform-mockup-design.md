@@ -1,3 +1,5 @@
+**Current update:** account/function and usability decisions are superseded by [the usability rework](2026-11-06-marina-usability-rework.md). The three confirmed account types share operational functions for now.
+
 # SAFERSEAS complete platform mockup: design for approval
 
 Date: 6 November 2026. Audience: MARINA reviewers and the implementation developer.

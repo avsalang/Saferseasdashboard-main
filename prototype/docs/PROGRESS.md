@@ -12,3 +12,19 @@ User approved the complete Vue/Quasar mockup, verification and update of the exi
 Material review fixes include scoped linked records/artifact history; preserved evidence and unique references on draft discard; visible storage failure; immutable complete output snapshots; archive access after import reversal; saved MAIC/spot observations/evidence; and retained import blockers. See tests and acceptance results.
 
 The prior approval explicitly covers repository/Pages updating, so no repeat integration-choice question is necessary. The previous React commit and source remain preserved. The backend and production frontend repositories remain untouched.
+
+## Account and usability rework
+
+Confirmed types: MRO Reporter, MRO Reviewer, MARINA Investigator. The user explicitly requested redundant operational functions for now; role-prioritized starting pages do not enforce exclusive handoffs. MARINA Investigator retains all functions and all-office/system access. The SAFERSEAS visual language remains.
+
+Completed: corrections/drafts first; compact essential intake; shared operational tools; labeled grouped navigation; received/update review queue; five-section review; staged MAIC editing; common reports and choose/preview/download; explicit incident selection; preserved fields/revisions/evidence/exports. Account migration, central privilege caps, scope and both author correction cycles verified. See USABILITY_REWORK.md and VERIFICATION.md.
+
+Latest rework deployment: pending publication and live acceptance.
+
+## Account and usability rework
+
+Confirmed types: MRO Reporter, MRO Reviewer, MARINA Investigator. The user explicitly requested redundant operational functions for now; role-prioritized starting pages do not enforce exclusive handoffs. MARINA Investigator retains all functions and all-office/system access. The SAFERSEAS visual language remains.
+
+Completed: corrections/drafts first; compact essential intake; shared operational tools; labeled grouped navigation; received/update review queue; five-section review; staged MAIC editing; common reports and choose/preview/download; explicit incident selection; preserved fields/revisions/evidence/exports. Account migration, central privilege caps, scope and both author correction cycles verified. See USABILITY_REWORK.md and VERIFICATION.md.
+
+Latest rework deployment: pending publication and live acceptance.

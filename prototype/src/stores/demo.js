@@ -1,12 +1,12 @@
 import { reactive, computed, watch } from 'vue';
 import { createSeed, blankEvent, blankVessel } from '../data/seed.js';
-import { roleLabels,rolePermissions,canAccess,filterEvents,summarizeEvents,transitionEvent,appendReport,normalizedCount,clone } from '../data/domain.js';
+import { roleLabels,rolePermissions,operationalPermissions,canAccess,filterEvents,summarizeEvents,transitionEvent,appendReport,normalizedCount,clone } from '../data/domain.js';
 import {migrateAccountModel} from '../data/accounts.js';
 const KEY='saferseas-marina-vue-demo-v1';
 const uid=prefix=>prefix+'-'+(globalThis.crypto?.randomUUID?.()||Math.random().toString(36).slice(2));
 let loaded;try{loaded=JSON.parse(localStorage.getItem(KEY)||'null');}catch{}
 const state=reactive(migrateAccountModel(loaded));
-const currentUser=computed(()=>{const u=state.users.find(u=>u.id===state.sessionUserId&&u.status==='active');if(!u||!Object.hasOwn(rolePermissions,u.role))return null;const role=state.roles.find(r=>r.id===u.role);return {...u,scope:u.role==='investigator'?'all':u.scope,permissions:u.role==='investigator'?rolePermissions.investigator:role?.permissions||rolePermissions[u.role]||[]};});
+const currentUser=computed(()=>{const u=state.users.find(u=>u.id===state.sessionUserId&&u.status==='active');if(!u||!Object.hasOwn(rolePermissions,u.role))return null;const role=state.roles.find(r=>r.id===u.role);return {...u,scope:u.role==='investigator'?'all':u.scope,permissions:u.role==='investigator'?rolePermissions.investigator:(role?.permissions||rolePermissions[u.role]||[]).filter(p=>operationalPermissions.includes(p))};});
 const can=(action,event)=>canAccess(currentUser.value,action,event);
 const visibleEvents=computed(()=>state.events.filter(e=>can('read',e)));
 const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify({...state,persistenceError:null}));state.persistenceError=null;return true;}catch{state.persistenceError='Browser storage capacity was exceeded. Changes remain in this session but have not been saved. Export your work before closing this tab.';return false;}};
@@ -19,7 +19,7 @@ function visibleRecords(collection){
     if(collection==='exports'){const events=r.snapshot?.events||[];return events.length?events.every(e=>can('read',state.events.find(live=>live.id===e.id)||e)):ownOrOffice(r);}
     if(collection==='sourceRows')return visibleRecords('imports').some(b=>b.id===(r.batchId||r.importId));
     if(collection==='cases'&&!can('enforce'))return false;
-    if(collection==='reports'&&u.role==='reporter'&&(r.type!=='spot'||r.createdBy!==u.id))return false;
+    if(collection==='reports'&&u.role==='reporter'&&!can('investigate')&&(r.type!=='spot'||r.createdBy!==u.id))return false;
     if(r.eventId)return eventIds.has(r.eventId);
     if(['evidence','imports','assessments','vessels'].includes(collection))return ownOrOffice(r);
     return true;
@@ -48,7 +48,7 @@ function add(collection,data){
 }
 function update(collection,id,patch){
   const item=state[collection]?.find(x=>x.id===id);if(!item)throw Error('Record not found.');if(collection==='users'&&Object.hasOwn(patch,'role')&&!Object.hasOwn(rolePermissions,patch.role))throw Error('Choose one of the three supported account types.');assertCollection(collection,patch,item);
-  if(collection==='roles')patch={...patch,name:roleLabels[id],...(id==='investigator'?{permissions:rolePermissions.investigator,scope:'all'}:{})};
+  if(collection==='roles')patch={...patch,name:roleLabels[id],...(id==='investigator'?{permissions:rolePermissions.investigator,scope:'all'}:{permissions:(patch.permissions||item.permissions).filter(p=>operationalPermissions.includes(p))})};
   if(collection==='reports'&&item.status==='issued')throw Error('Issued report revisions are immutable. Create a new revision.');
   const before=clone(item);Object.assign(item,clone(patch),{id,updatedAt:new Date().toISOString()});audit('Updated '+collection,id,{before,after:clone(item)});return item;
 }
@@ -57,7 +57,7 @@ function newEvent(){const e=blankEvent();e.ownerId=currentUser.value?.id||'';e.o
 function saveEvent(data,{submit=false}={}){
   requireActive();const existing=data.id?state.events.find(e=>e.id===data.id):null;
   if(!can('report',existing||undefined)&&!can('review',existing||undefined)&&!can('investigate',existing||undefined))throw Error('You cannot edit this incident.');
-  if(existing&&currentUser.value.role==='reporter'&&!['draft','correction_requested'].includes(existing.status))throw Error('This report is awaiting staff review and is not editable.');
+  if(existing&&currentUser.value.role==='reporter'&&!can('review',existing)&&!can('investigate',existing)&&!['draft','correction_requested'].includes(existing.status))throw Error('This report is awaiting staff review and is not editable.');
   const clean={...newEvent(),...clone(data)};clean.ownerId=existing?.ownerId||currentUser.value.id;clean.officeId=existing?.officeId||currentUser.value.officeId;clean.status=existing?.status||'draft';
   clean.consequences={...blankEvent().consequences,...clean.consequences};for(const k of ['fatalities','missing','injured','rescued','totalOnboard','crew','passengers'])clean.consequences[k]=normalizedCount(clean.consequences[k]);
   clean.vessels=(clean.vessels||[]).map(v=>({...blankVessel(),...v,id:v.id||uid('vessel')}));
@@ -71,7 +71,7 @@ function saveEvent(data,{submit=false}={}){
 }
 function transition(id,status,remarks=''){
   const i=state.events.findIndex(e=>e.id===id);if(i<0)throw Error('Incident not found.');const next=transitionEvent(state.events[i],status,currentUser.value,remarks);state.events[i]=next;
-  audit('Incident '+status,id,remarks);if(['correction_requested','validated'].includes(status))notify(next.ownerId,status==='validated'?'Report validated':'Correction requested',remarks||'Your report has been reviewed.','/reporter/reports/'+id);
+  audit('Incident '+status,id,remarks);if(['correction_requested','validated'].includes(status)){const owner=state.users.find(u=>u.id===next.ownerId),link=(owner?.role==='reporter'?'/reporter/reports/':'/admin/incidents/')+id;notify(next.ownerId,status==='validated'?'Report validated':'Correction requested',remarks||'Your report has been reviewed.',link);}
   if(['submitted','resubmitted'].includes(status))state.users.filter(u=>u.role==='reviewer'&&u.status==='active').forEach(u=>notify(u.id,'Report ready for review',next.ref,'/admin/incidents/'+id));return state.events[i];
 }
 function recordReport(data){

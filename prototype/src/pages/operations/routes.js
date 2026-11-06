@@ -8,7 +8,7 @@ import Actions from './Actions.vue'
 import Cases from './Cases.vue'
 import Registry from './Registry.vue'
 
-const roles = ['reviewer', 'investigator']
+const roles = ['reporter', 'reviewer', 'investigator']
 const route = (path, component, title, screenId, permission, props) => ({ path, component, props, meta: { roles, title, screenId, ...(permission ? { permission } : {}) } })
 export const operationsRoutes = [
   route('/admin', Dashboard, 'Operations overview', 'A01'),

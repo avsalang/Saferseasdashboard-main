@@ -1,5 +1,7 @@
 <script setup>
 import { vesselGroups } from './fields.js'
+const basicFields=new Set(['name','type','officialNumber','imoNumber','grossTonnage','registrationStatus'])
+const optionalGroups=vesselGroups.map(group=>({...group,fields:group.fields.filter(([key])=>!basicFields.has(key))})).filter(group=>group.fields.length)
 defineProps({model:Object,compact:Boolean,offices:Array})
 </script>
 <template>
@@ -11,7 +13,7 @@ defineProps({model:Object,compact:Boolean,offices:Array})
     <q-input v-model.number="model.grossTonnage" type="number" step="any" min="0" outlined label="Gross tonnage (GT)" hint="Decimal values accepted; leave blank if unknown" />
     <q-input v-model="model.registrationStatus" outlined label="Registration status" />
   </div>
-  <q-expansion-item v-for="group in vesselGroups" :key="group.title" :label="group.title" icon="directions_boat" :default-opened="!compact" class="q-mt-sm">
+  <q-expansion-item v-for="group in optionalGroups" :key="group.title" :label="group.title" icon="directions_boat" caption="Optional particulars · open to view or update" class="q-mt-sm">
     <div class="form-grid q-pa-md">
       <template v-for="[field,label,type] in group.fields" :key="field">
         <q-select v-if="['homeport','cpc'].includes(field)" v-model="model[field]" :options="offices" emit-value map-options outlined clearable :label="label" />

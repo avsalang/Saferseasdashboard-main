@@ -1,8 +1,8 @@
 {
   "route-results": {
+    "passed": true,
     "checks": 55,
-    "exceptions": [],
-    "overflow": []
+    "errors": []
   },
   "reporter-journey": {
     "passed": true,
@@ -50,6 +50,125 @@
       "Only an existing issued invitation activates",
       "Administrator suspends an issued account with history retained",
       "No browser exceptions during administrative workflows"
+    ],
+    "errors": []
+  },
+  "role-access": {
+    "passed": true,
+    "checks": [
+      "Sign-in offers exactly the three confirmed account types",
+      "MRO Reviewer can open the review queue",
+      "MRO Reviewer is denied /admin/accounts",
+      "MRO Reviewer is denied /admin/settings",
+      "MRO Reviewer is denied /admin/audit",
+      "MRO Reviewer retains overlapping operational access: /admin/incidents/new",
+      "MRO Reviewer retains overlapping operational access: /admin/investigations/e-003",
+      "MRO Reviewer retains overlapping operational access: /admin/cases",
+      "MRO Reviewer retains overlapping operational access: /admin/reports",
+      "MRO Reporter can reach investigations through Work tools",
+      "MRO Reporter can prepare investigation records for permitted incidents",
+      "MARINA Investigator can open /admin/review",
+      "MARINA Investigator can open /admin/investigations/e-003",
+      "MARINA Investigator can open /admin/cases",
+      "MARINA Investigator can open /admin/accounts",
+      "MARINA Investigator can open /admin/roles",
+      "MARINA Investigator can open /admin/settings",
+      "MARINA Investigator can open /admin/imports",
+      "MARINA Investigator can open /admin/reports",
+      "Investigation assignment supports the overlapping operational account types",
+      "Role configuration does not add a fourth account type",
+      "Account issuance is limited to the three confirmed types",
+      "No page exceptions in three-role workflows"
+    ],
+    "errors": []
+  },
+  "reviewer-author-correction": {
+    "passed": true,
+    "checks": [
+      "staff editor offers all five own-scope directory vessels",
+      "staff presentation does not expose any out-of-scope vessel",
+      "reviewer authored draft persists under its issued owner and office after reload",
+      "reviewer draft retains two vessels, decimal GT and evidence metadata",
+      "reviewer submits its own report and creates the first spot revision",
+      "investigator correction notifies reviewer owner in the staff workspace",
+      "reviewer opens the actual correction notification and sees its instructions",
+      "opening the correction notification marks it read",
+      "staff correction editor exposes the Resubmit report primary action",
+      "reviewer resubmission persists after reload with ownership retained",
+      "all four correction-cycle history stages are retained",
+      "history attributes submit/resubmit to reviewer and correction review to investigator",
+      "both reviewer spot revisions retain their original and corrected occurrence values",
+      "resubmission retains both vessel snapshots and evidence in both revisions",
+      "all untouched consequence counts remain unknown after reviewer resubmission",
+      "other non-draft staff edits retain the Save incident changes action",
+      "saving other staff edits does not resubmit again or create a third revision",
+      "no browser console errors or page exceptions during focused regression journey"
+    ],
+    "errors": []
+  },
+  "reports-usability-checks": {
+    "passed": true,
+    "checks": [
+      "Unknown classification is applied through the actual report filter control",
+      "Reports opens with a plain task heading",
+      "Four common reports lead the page",
+      "All22 report types remain reachable in grouped choices",
+      "Friendly search narrows report choices",
+      "Opening a report preserves the current selection including All and unknown",
+      "Builder shows only year, area and cutoff initially",
+      "Advanced filter wall starts collapsed",
+      "Incident context opens a document report without resetting existing filters",
+      "Conflicting incident context and retained filters are explained",
+      "Incident context does not silently narrow aggregate reports",
+      "Download snapshot contains every selected involvement across preview pages",
+      "Downloaded report retains unknown values",
+      "Saved report has a clear reopen action",
+      "Download again reproduces the saved report exactly",
+      "Saved selection metadata starts collapsed",
+      "Reports fit the mobile viewport",
+      "Document download requires an explicitly chosen incident",
+      "Empty document builder explains the required incident choice",
+      "Report builder fits the mobile viewport",
+      "Print / PDF becomes available after explicit incident selection",
+      "Primary flows have no browser exceptions"
+    ],
+    "errors": []
+  },
+  "responsive-sizes": {
+    "passed": true,
+    "checks": 16,
+    "widths": [
+      390,
+      768,
+      1024,
+      1280
+    ]
+  },
+  "compact-intake": {
+    "passed": true,
+    "recordId": "event-6dcc4353-756f-4894-9e00-c2b440201ca0",
+    "mobileBox": {
+      "x": 45,
+      "y": 388.09375,
+      "width": 300,
+      "height": 56
+    },
+    "laptopBox": {
+      "x": 170,
+      "y": 418.390625,
+      "width": 492,
+      "height": 56
+    },
+    "checks": [
+      "390x844 occurrence date input is visible at y=388px",
+      "compact mobile form has no horizontal overflow",
+      "1366x768 occurrence date input is visible at y=418px",
+      "expanded account preserves accessible read-only issued identity",
+      "source completion menu still opens the Vessels step",
+      "mobile Save draft retains all entered occurrence and vessel data",
+      "mobile Submit report retains its workflow and creates one submitted revision",
+      "presentation-only change preserves unknown consequence counts",
+      "no console errors or page exceptions in compact form checks"
     ],
     "errors": []
   }

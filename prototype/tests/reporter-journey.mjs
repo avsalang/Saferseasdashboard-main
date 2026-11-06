@@ -21,6 +21,7 @@ await login('MRO Reporter MRO-IV');
 await page.getByRole('link',{name:'New spot report',exact:true}).click();
 await fill('Occurrence date','2026-11-06');
 await select('Primary incident type *','Collision');
+await page.getByText('Classification and impacts (optional)',{exact:true}).click();
 await select('Additional incident types','Grounding');
 await select('Additional incident types','Listing');
 await fill('Reported place / location *','QA fictional harbor approach');

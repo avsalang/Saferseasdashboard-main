@@ -1,40 +1,45 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useDemo } from '../../stores/demo.js'
 import RegistryStats from './visual/RegistryStats.vue'
 import { downloadCSV } from '../../lib/exports.js'
 import { eventColumns, clone } from './common.js'
+import{reviewQueue}from'../../data/workQueues.js'
 import { createIncidentSnapshot } from './registerExport.js'
 const props = defineProps({review:Boolean})
 const store = useDemo()
 const filters = computed(()=>store.state.selection)
 const years=computed(()=>[...new Set(store.visibleEvents.value.filter(e=>e.date && !e.dateUnknown).map(e=>e.date.slice(0,4)))].sort().reverse())
-const rows = computed(()=>store.selectEvents(filters.value).filter(e=>!props.review || ['submitted','resubmitted','under_review','correction_requested'].includes(e.status)))
+const queueView=ref('ready'),baseRows=computed(()=>store.selectEvents(filters.value));
+const rows=computed(()=>props.review?reviewQueue(baseRows.value,queueView.value):baseRows.value)
 const involved = computed(()=>rows.value.reduce((n,e)=>n+(e.vessels?.length || 0),0))
 const error=ref(''), dialog=ref(false), selected=ref(null), remarks=ref('')
 function transition(event,status){try{error.value='';store.transition(event.id,status,remarks.value);dialog.value=false;remarks.value=''}catch(e){error.value=e.message}}
 function request(event){selected.value=event;remarks.value='';dialog.value=true}
 function csv(){try{error.value='';if(!store.can('export'))throw Error('Export permission required.');const selection=clone(filters.value),snapshot=createIncidentSnapshot(rows.value,selection,{review:props.review});downloadCSV('incident-register.csv',snapshot.rows);store.recordExport({name:snapshot.title,outputId:'incident-register',format:'CSV',status:'ready',selection:{...selection,queue:props.review?'review':'all'},snapshot,revision:store.visibleRecords('exports').filter(e=>e.outputId==='incident-register').length+1,notes:'Event-level register; browser-local demo'})}catch(e){error.value=e.message}}
 
-const filtersOpen=ref(false),pagination=ref({rowsPerPage:10,sortBy:'date',descending:true,page:1})
+const filtersOpen=ref(false),pagination=ref({rowsPerPage:10,sortBy:props.review?'received':'date',descending:true,page:1})
 const activeFiltersCount=computed(()=>Object.values(filters.value).filter(v=>v!==''&&v!==null&&v!==undefined&&!['all','All'].includes(v)).length)
 const registryStats=computed(()=>[
  {label:'Awaiting Review',value:rows.value.filter(e=>['submitted','resubmitted'].includes(e.status)).length,icon:'pending_actions',iconBg:'#FAEEDA',iconColor:'#854F0B'},
  {label:'Under Review',value:rows.value.filter(e=>e.status==='under_review').length,icon:'fact_check',iconBg:'#E6F1FB',iconColor:'#185FA5'},
- {label:'Validated Reports',value:rows.value.filter(e=>e.status==='validated').length,icon:'verified_user',iconBg:'#EAF3DE',iconColor:'#3B6D11'},
+ {label:props.review?'Awaiting Corrections':'Validated Reports',value:props.review?reviewQueue(baseRows.value,'waiting').length:rows.value.filter(e=>e.status==='validated').length,icon:'verified_user',iconBg:'#EAF3DE',iconColor:'#3B6D11'},
  {label:'Total Incident Records',value:rows.value.length,icon:'folder_open',iconBg:'rgba(24,95,165,.1)',iconColor:'#185FA5'},
 ])
+const queueColumns=computed(()=>props.review?[eventColumns[0],{name:'received',label:'Last received / updated',field:r=>r.updatedAt||r.createdAt||r.receivedDate||'',format:value=>!value?'Unknown':value.includes('T')?new Date(value).toLocaleString('en-PH',{timeZone:store.state.settings.timezone||'Asia/Manila',dateStyle:'short',timeStyle:'short'}):value,align:'left',sortable:true,sort:(a,b)=>(Date.parse(a)||0)-(Date.parse(b)||0)},...eventColumns.slice(1)]:eventColumns);
+watch(queueView,()=>pagination.value.page=1);watch(()=>props.review,value=>{queueView.value='ready';pagination.value={...pagination.value,page:1,sortBy:value?'received':'date'}});
 const statusColor=status=>status==='validated'?'green':status==='correction_requested'?'red':status==='under_review'?'amber':'grey'
 const formatStatus=status=>String(status||'Unknown').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase())
 function refresh(){pagination.value={...pagination.value,page:1};store.persist()}
 </script>
 
 <template><div class="q-pa-lg dashboard-bg tracking-page">
- <div class="row items-center q-mb-md"><div class="col-12 col-md-6"><q-breadcrumbs class="breadcrumbs q-mb-md"><q-breadcrumbs-el label="Dashboard" icon="home" to="/admin"/><q-breadcrumbs-el :label="review?'Review Queue':'Incidents'"/></q-breadcrumbs><h1 class="page-title">{{review?'Review Queue (Admin)':'Reports Registry (Admin)'}}</h1><div class="page-sub">{{review?'Review reported events and coordinate correction requests':'National maritime incident registry and safety coordination platform'}}</div></div><q-space/><div class="col-12 col-md-auto q-gutter-sm row items-center header-actions-wrapper"><q-btn outline no-caps icon="filter_list" label="Filters" @click="filtersOpen=true" class="btn-filter-trigger text-weight-medium"><q-badge v-if="activeFiltersCount" color="red" floating rounded>{{activeFiltersCount}}</q-badge></q-btn><q-btn outline no-caps icon="refresh" label="Refresh" @click="refresh" class="btn-refresh-custom"/><q-btn v-if="store.can('export')" outline no-caps icon="download" label="Export CSV" @click="csv" class="btn-filter-trigger"/><q-btn v-if="store.can('report')" unelevated color="primary" no-caps icon="add" label="New incident" to="/admin/incidents/new"/></div></div>
+ <div class="row items-center q-mb-md"><div class="col-12 col-md-6"><q-breadcrumbs class="breadcrumbs q-mb-md"><q-breadcrumbs-el label="Dashboard" icon="home" to="/admin"/><q-breadcrumbs-el :label="review?'Review Queue':'Incidents'"/></q-breadcrumbs><h1 class="page-title">{{review?'Review queue':'Incident register'}}</h1><div class="page-sub">{{review?'Review reported events and coordinate correction requests':'National maritime incident registry and safety coordination platform'}}</div></div><q-space/><div class="col-12 col-md-auto q-gutter-sm row items-center header-actions-wrapper"><q-btn outline no-caps icon="filter_list" label="Filters" @click="filtersOpen=true" class="btn-filter-trigger text-weight-medium"><q-badge v-if="activeFiltersCount" color="red" floating rounded>{{activeFiltersCount}}</q-badge></q-btn><q-btn outline no-caps icon="refresh" label="Refresh" @click="refresh" class="btn-refresh-custom"/><q-btn v-if="store.can('export')" outline no-caps icon="download" label="Export CSV" @click="csv" class="btn-filter-trigger"/><q-btn v-if="store.can('report')" unelevated color="primary" no-caps icon="add" label="New incident" to="/admin/incidents/new"/></div></div>
  <q-banner v-if="error" class="bg-red-1 text-negative q-mb-md" rounded>{{error}}</q-banner>
  <RegistryStats :stats="registryStats"/>
- <q-card flat class="table-card overflow-hidden"><div class="row items-center justify-between q-px-lg q-py-md"><div class="text-h6 text-weight-bold registry-table-title">Comprehensive Incident Registry</div><span class="text-caption text-grey-6">{{rows.length}} events · {{involved}} vessel involvements</span></div>
- <q-table flat class="bg-transparent premium-table" :grid="$q.screen.lt.md" :rows="rows" :columns="eventColumns" row-key="id" v-model:pagination="pagination" :rows-per-page-options="[10,25,50,0]" no-data-label="No incidents match this selection">
+ <div v-if="review" class="panel q-mb-md"><div class="row items-center justify-between q-gutter-md"><q-btn-toggle v-model="queueView" no-caps unelevated toggle-color="primary" :options="[{label:'Needs review',value:'ready'},{label:'Awaiting corrections',value:'waiting'},{label:'All open',value:'all'}]"/><q-btn v-if="activeFiltersCount" flat no-caps label="Clear filters" icon="filter_alt_off" @click="Object.keys(filters).forEach(k=>delete filters[k])"/></div><p class="text-caption muted q-mt-md q-mb-none">{{queueView==='waiting'?'Open a report to add the requested corrections or follow its progress.':'Check the occurrence, vessels, consequences and sources, then validate or request corrections.'}} New and updated reports appear first, including reports about older occurrences.</p></div>
+ <q-card flat class="table-card overflow-hidden"><div class="row items-center justify-between q-px-lg q-py-md"><div class="text-h6 text-weight-bold registry-table-title">{{review?'Reports to review':'Incident register'}}</div><span class="text-caption text-grey-6">{{rows.length}} events · {{involved}} vessel involvements</span></div>
+ <q-table flat class="bg-transparent premium-table" :grid="$q.screen.lt.md" :rows="rows" :columns="queueColumns" row-key="id" v-model:pagination="pagination" :rows-per-page-options="[10,25,50,0]" no-data-label="No incidents match this selection">
  <template #body-cell-ref="p"><q-td :props="p"><router-link class="record-link" :to="`/admin/incidents/${p.row.id}`">{{p.row.ref}}</router-link><div class="text-caption text-grey-6">{{p.row.vessels?.map(v=>v.name).join(' · ') || 'Vessel unknown'}}</div></q-td></template>
  <template #body-cell-status="p"><q-td :props="p"><div class="status row items-center no-wrap" :class="'s-'+statusColor(p.row.status)"><div class="sdot q-mr-xs"/>{{formatStatus(p.row.status)}}</div></q-td></template>
  <template #body-cell-actions="p"><q-td :props="p"><div class="row no-wrap justify-center q-gutter-xs"><q-btn flat round dense color="primary" icon="visibility" size="sm" class="action-btn" :to="`/admin/incidents/${p.row.id}`" aria-label="View incident"><q-tooltip>View Details</q-tooltip></q-btn><q-btn v-if="store.can('review',p.row)" flat round dense color="grey-6" icon="edit" size="sm" class="action-btn-edit" :to="`/admin/incidents/${p.row.id}/edit`" aria-label="Edit incident"><q-tooltip>Edit Case File</q-tooltip></q-btn><template v-if="review && store.can('review',p.row)"><q-btn v-if="['submitted','resubmitted'].includes(p.row.status)" flat dense no-caps label="Start review" @click="transition(p.row,'under_review')"/><q-btn v-if="p.row.status==='under_review'" flat dense no-caps label="Corrections" @click="request(p.row)"/><q-btn v-if="p.row.status==='under_review'" flat dense color="positive" no-caps label="Validate" @click="transition(p.row,'validated')"/></template></div></q-td></template>

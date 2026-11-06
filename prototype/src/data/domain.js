@@ -1,11 +1,13 @@
 export const roleLabels={reporter:'MRO Reporter',reviewer:'MRO Reviewer',investigator:'MARINA Investigator'};
-export const rolePermissions={reporter:['read','report'],reviewer:['read','review','analyze','export','audit'],investigator:['read','report','review','investigate','enforce','analyze','export','manage_accounts','configure','audit','admin']};
+export const operationalPermissions=['read','report','review','investigate','enforce','analyze','export'];
+// Operational overlap is intentional in this mockup, as requested by MARINA's stakeholder.
+export const rolePermissions={reporter:[...operationalPermissions],reviewer:[...operationalPermissions],investigator:[...operationalPermissions,'manage_accounts','configure','audit','admin']};
 export const clone=value=>JSON.parse(JSON.stringify(value));
 export function canAccess(user,action,event){
   if(!user||user.status!=='active'||!Object.hasOwn(rolePermissions,user.role))return false;
-  const permissions=user.permissions||rolePermissions[user.role]||[];
+  const permissions=user.role==='investigator'?rolePermissions.investigator:(user.permissions||rolePermissions[user.role]).filter(p=>operationalPermissions.includes(p));
   if(!permissions.includes(action)&&!permissions.includes('admin'))return false;
-  if(event){if(user.scope==='own'&&event.ownerId!==user.id)return false;if(user.scope==='office'&&event.officeId!==user.officeId&&event.aor!==user.officeId)return false;}
+  if(event&&event.investigatorId!==user.id){if(user.scope==='own'&&event.ownerId!==user.id)return false;if(user.scope==='office'&&event.officeId!==user.officeId&&event.aor!==user.officeId)return false;}
   return true;
 }
 const any=v=>v==null||v===''||v==='All'||v==='all';

@@ -1,8 +1,8 @@
 <template>
-  <div class="table-card relative-position column no-wrap" style="height: 500px;">
+  <div class="table-card relative-position column no-wrap" :style="{height: compact ? 'auto' : '500px'}">
     <div class="table-hd">
       <div style="display:flex;align-items:center;gap:10px;">
-        <p style="font-size:15px;font-weight:500;color:#111827;margin:0;">Recent incident records</p>
+        <p style="font-size:15px;font-weight:500;color:#111827;margin:0;">{{ compact ? 'Report tracking' : 'Recent incident records' }}</p>
         <q-btn
           flat round dense
           icon="info_outline"
@@ -24,8 +24,8 @@
         <thead>
           <tr>
             <th>Vessel</th>
-            <th>Casualty</th>
-            <th>Severity</th>
+            <th>Incident type</th>
+            <th>Seriousness</th>
             <th>Status</th>
           </tr>
         </thead>
@@ -39,7 +39,7 @@
         </tbody>
         <tbody v-else>
           <tr v-for="row in recentIncidents" :key="row.id" role="link" tabindex="0" style="cursor:pointer" @click="openRecord(row)" @keydown.enter="openRecord(row)">
-            <td style="font-weight:500;color:#111827;">{{ row.vessel || 'Unknown Vessel' }}</td>
+            <td style="font-weight:500;color:#111827;">{{ row.vessel || 'Unknown Vessel' }}<div v-if="compact" class="text-caption text-grey-6">{{ row.ref }}</div></td>
             <td style="color:#6b7280;">{{ row.type || 'None' }}</td>
             <td>
               <span class="status" :class="getSeverityBadgeClass(row.severity).bg">
@@ -107,7 +107,7 @@
           Showing {{ recentIncidents.length }} of {{ totalCount }} records
         </template>
       </span>
-      <button class="btn-outline-small" @click="router.push('/reporter/reports')">View comprehensive registry</button>
+      <button class="btn-outline-small" @click="router.push('/reporter/reports')">View all my reports</button>
     </div>
   </div>
 
@@ -137,10 +137,10 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDemo } from '../../../stores/demo.js'
-const props=defineProps({year:{type:[String,Number],required:true}}),store=useDemo(),router=useRouter()
+const props=defineProps({year:{type:[String,Number],required:true},compact:Boolean}),store=useDemo(),router=useRouter()
 const loading=false,showInfoDialog=ref(false)
 const selected=computed(()=>store.selectEvents({year:String(props.year)})),totalCount=computed(()=>selected.value.length)
-const recentIncidents=computed(()=>[...selected.value].sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||'')).slice(0,3).map(e=>({...e,vessel:e.vessels.map(v=>v.name).join(' / '),severity:(e.seriousness||'unknown').replaceAll('_',' '),status:e.status.replaceAll('_',' ')})))
+const recentIncidents=computed(()=>[...selected.value].sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||'')).slice(0,props.compact?6:3).map(e=>({...e,vessel:e.vessels.map(v=>v.name).join(' / '),severity:(e.seriousness||'unknown').replaceAll('_',' '),status:e.status.replaceAll('_',' ')})))
 function openRecord(row){router.push('/reporter/reports/'+row.id)}
 function getSeverityBadgeClass(value){return value==='very serious'?{bg:'s-red',dot:'#A32D2D'}:value==='serious'?{bg:'s-amber',dot:'#854F0B'}:value==='less serious'?{bg:'s-green',dot:'#3B6D11'}:{bg:'s-blue',dot:'#185FA5'}}
 function getStatusBadgeClass(value){return value==='validated'?{bg:'s-green',dot:'#3B6D11'}:['under review','correction requested','submitted','resubmitted'].includes(value)?{bg:'s-amber',dot:'#854F0B'}:{bg:'s-blue',dot:'#185FA5'}}

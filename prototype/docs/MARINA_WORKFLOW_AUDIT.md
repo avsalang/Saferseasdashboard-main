@@ -4,7 +4,7 @@
 
 **Confirmed scope update, 6 November 2026:** There will be no public interface. Reporting requires an account issued by MARINA. The target is an authenticated system for authorized reporters and MARINA staff, with role/office permissions. Public self-registration, anonymous submission, unauthenticated tracking and public incident browsing/maps are out of scope and must be disabled at the API as well as the UI. References to “public” below in the existing-capability and defect inventories describe the inspected legacy implementation, not a retained product requirement. Exact reporter/staff roles and scopes remain proposed for MARINA to assign.
 
-**Confirmed account model, 6 November 2026:** MRO Reporter, MRO Reviewer and MARINA Investigator. The MARINA Investigator has access to all functions. Account suggestions elsewhere in this original audit are superseded by this user-confirmed model.
+**Confirmed account model, 6 November 2026:** MRO Reporter, MRO Reviewer and MARINA Investigator. The MARINA Investigator has access to all functions. Operational reporting, review, investigation and follow-up functions overlap across the three types for now, as explicitly requested by the user. Account suggestions elsewhere in this original audit are superseded by this user-confirmed model.
 
 ## 1. Assessment
 
