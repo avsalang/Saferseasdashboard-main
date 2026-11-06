@@ -10,9 +10,9 @@ export const userOptions = (store) => store.state.users.filter(u => u.status ===
 export const eventColumns = [
   { name: 'ref', label: 'Incident', field: 'ref', align: 'left', sortable: true },
   { name: 'date', label: 'Occurrence', field: r => r.dateUnknown ? 'Unknown date' : (r.date || 'Unknown date'), align: 'left', sortable: true },
-  { name: 'type', label: 'Incident type', field: 'type', align: 'left', sortable: true },
+  { name: 'type', label: 'Type of Incident / Accident', field: 'type', align: 'left', sortable: true },
   { name: 'place', label: 'Location', field: 'place', align: 'left' },
-  { name: 'seriousness', label: 'Seriousness', field: r => label(r.seriousness), align: 'left', sortable: true },
+  { name: 'seriousness', label: 'Level of Maritime Accident (MARINA)', field: r => label(r.seriousness), align: 'left', sortable: true },
   { name: 'status', label: 'Review status', field: 'status', align: 'left', sortable: true },
   { name: 'actions', label: '', field: 'id', align: 'right' },
 ]

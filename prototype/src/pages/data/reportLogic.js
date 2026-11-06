@@ -1,3 +1,5 @@
+import {describeReportingExceptions} from '../../data/reportingRequirements.js'
+import {reportRequirements,reportReceiptRequirements,describeOperationalExceptions} from '../operations/reportRequirements.js'
 import {describeEnvironmentField} from '../../data/incidentWeather.js'
 import { maicGroups,initialFields,initializeFields } from '../operations/maic.js'
 
@@ -7,6 +9,13 @@ export function selectReportRevision({event,report,evidenceRecords=[]}) {
  const outputEvent=saved?{ref:event.ref,officeId:event.officeId,...saved,id:event.id,vessels:saved.vessels||[],consequences:saved.consequences||{}}:event
  const ids=report?(report.evidenceIds||[]):(event.evidenceIds||[])
  return {event:outputEvent,report,evidence:ids.map(id=>evidenceRecords.find(item=>item.id===id&&item.eventId===event.id)).filter(Boolean)}
+}
+function sourceReportingExceptionText(event,report){
+ if(!report)return describeReportingExceptions(event)
+ const retained=Object.hasOwn(report,'sourceReportingExceptions')?report.sourceReportingExceptions:report.fields?.reportingExceptions
+ if(!retained)return 'No source-incident reporting-exception snapshot was retained with this revision.'
+ const labels=report.sourceReportingLabels||{}
+ return Object.entries(retained).filter(([,exception])=>['unknown','not_applicable'].includes(exception?.status)&&exception.reason?.trim()).map(([key,exception])=>`${labels[key]||key}: ${exception.status==='not_applicable'?'Not Applicable':'Unknown'} — ${exception.reason.trim()}`).join('\n')||'No source-incident reporting exceptions recorded with this revision.'
 }
 export function buildMAICSections({type,event,report,preparedBy,asOf,evidence=[]}) {
  // A saved revision is its own snapshot. Missing legacy keys stay unknown rather than borrowing later live facts.
@@ -21,8 +30,10 @@ export function buildMAICSections({type,event,report,preparedBy,asOf,evidence=[]
    return `${field.label}:\n${text(value)}`
  }).join('\n\n')})
  sections.push({title:'Prepared / noted by',content:`Prepared by: ${text(report?.preparedBy||preparedBy)}\nDesignation: ${text(report?.designation)}\nNoted by: ${report?.notedBy||'Not signed'}\nNoted date: ${text(report?.notedDate)}\nSubmitting office: ${text(event.officeId)}`})
- const extras=Object.entries(report?.fields||event.maicFields||{}).filter(([key])=>!knownKeys.has(key))
+ const extras=Object.entries(report?.fields||event.maicFields||{}).filter(([key])=>!knownKeys.has(key)&&key!=='particularsAssessment')
  if(extras.length)sections.push({title:'Additional retained report fields',content:extras.map(([key,value])=>`${key}:\n${text(value)}`).join('\n\n')})
+ sections.push({title:'MAIC Reporting Exceptions',content:report?describeOperationalExceptions(report,[...reportRequirements(report,event),...reportReceiptRequirements(report)]):'No report-revision reporting exceptions recorded.'})
+ sections.push({title:'Source Incident Reporting Exceptions',content:sourceReportingExceptionText(event,report)})
  sections.push({title:'Evidence appendix',content:evidence.length?evidence.map(item=>`${text(item.type)} · ${text(item.name)} · ${text(item.sourceRef)}\n${text(item.notes)}`).join('\n\n'):'No evidence metadata supplied.'})
  return sections
 }
@@ -49,6 +60,7 @@ export function buildSpotSections({event,report,preparedBy,evidence=[]}) {
   {title:'Prepared by / submitting office',content:`Prepared by: ${text(report?.preparedBy||preparedBy)}\nOffice: ${text(event.officeId)}\nRevision: ${report?.revision??'No saved report revision'}`},
  ]
  if(explicitExtras.length)sections.push({title:'Additional MAIC fields supplied with the spot report',content:explicitExtras.map(([key,value])=>`${fieldDefinitions.get(key)?.label||key}:\n${text(extraValue(key,value))}`).join('\n\n')})
+ sections.push({title:'Source Incident Reporting Exceptions',content:sourceReportingExceptionText(event,report)})
  sections.push({title:'Preserved spot fields and evidence appendix',content:JSON.stringify({fields:report?.fields||event,evidence},(_key,value)=>value==null?'Unknown':value,2)})
  return sections
 }

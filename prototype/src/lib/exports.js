@@ -34,9 +34,9 @@ export async function downloadXLSX(filename, sheets) {
   })
   save(filename, new Blob([await book.xlsx.writeBuffer()], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}))
 }
-export function downloadGeoJSON(filename, events) {
+export function downloadGeoJSON(filename, events, reportingMetadata={}) {
   const features = events.filter(e => e.positionQuality !== 'unknown' && e.lat != null && e.lat !== '' && e.lon != null && e.lon !== '' && Number.isFinite(Number(e.lat)) && Number.isFinite(Number(e.lon)) && Math.abs(Number(e.lat)) <= 90 && Math.abs(Number(e.lon)) <= 180).map(e => ({ type:'Feature', id:e.id, geometry:{type:'Point',coordinates:[Number(e.lon),Number(e.lat)]}, properties:{reference:e.ref,date:e.date ?? 'Unknown',type:e.type,seriousness:e.seriousness,place:e.place,positionQuality:e.positionQuality,aor:e.aor,homeport:e.homeport,cpc:e.cpc,issuingOffice:e.issuingOffice,vesselInvolvements:e.vessels?.length ?? 0} }))
-  save(filename, JSON.stringify({type:'FeatureCollection',metadata:{generatedAt:new Date().toISOString(),population:events.length,located:features.length,excluded:events.length-features.length,data:'Fictional demonstration'},features},null,2), 'application/geo+json')
+  save(filename, JSON.stringify({type:'FeatureCollection',metadata:{...reportingMetadata,generatedAt:new Date().toISOString(),population:events.length,located:features.length,excluded:events.length-features.length,data:'Fictional demonstration'},features},null,2), 'application/geo+json')
 }
 export function printReport({title,subtitle,columns,rows = [],sections = [],metadata = {}}) {
   const popup = window.open('', '_blank'); if (!popup) throw new Error('Allow browser popups to open the printable report.')

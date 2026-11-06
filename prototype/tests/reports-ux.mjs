@@ -1,3 +1,4 @@
+import {acknowledgeWorkingCopy} from './requirements-browser-helper.mjs';
 import { chromium } from 'playwright'
 import assert from 'node:assert/strict'
 import fs from 'node:fs/promises'
@@ -15,8 +16,8 @@ try{
  await page.waitForURL('**/#/admin')
  await go('/admin/reports/build/O01')
  await page.getByText('More filters and office details',{exact:true}).click()
- await page.getByLabel('Seriousness',{exact:true}).click()
- await page.getByRole('option',{name:'unknown',exact:true}).click()
+ await page.getByLabel('Level of Maritime Accident (MARINA)',{exact:true}).click()
+ await page.getByRole('option',{name:'Unknown / under assessment',exact:true}).click()
  await page.keyboard.press('Escape')
  await page.getByText('More filters and office details',{exact:true}).click()
  check((await state()).selection.seriousness==='unknown','Unknown classification is applied through the actual report filter control')
@@ -49,7 +50,7 @@ try{
  await go('/admin/reports/build/O01')
  await page.getByRole('button',{name:'Clear filters',exact:true}).click()
  const downloading=page.waitForEvent('download')
- await page.getByRole('button',{name:'Download CSV',exact:true}).click()
+ await acknowledgeWorkingCopy(page);await page.getByRole('button',{name:'Download CSV',exact:true}).click()
  const first=await downloading,firstText=await fs.readFile(await first.path(),'utf8')
  let saved=await state(),job=saved.exports.find(item=>item.outputId==='O01')
  check(job.snapshot.rows.length===saved.events.reduce((sum,event)=>sum+(event.vessels?.length||0),0),'Download snapshot contains every selected involvement across preview pages')
@@ -76,7 +77,7 @@ try{
  await page.getByLabel('Incident',{exact:true}).click()
  await page.getByRole('option').first().click()
  await page.keyboard.press('Escape')
- check(await page.getByRole('button',{name:'Print / Save as PDF',exact:true}).isEnabled(),'Print / PDF becomes available after explicit incident selection')
+ await acknowledgeWorkingCopy(page);check(await page.getByRole('button',{name:'Print / Save as PDF',exact:true}).isEnabled(),'Print / PDF becomes available after explicit incident selection')
  check(!errors.length,'Primary flows have no browser exceptions')
  await fs.writeFile(out+'/reports-usability-checks.json',JSON.stringify({checks,errors},null,2))
 }catch(error){console.log(JSON.stringify({errors,banners:await page.locator('.q-banner,.q-notification').allTextContents()},null,2));await page.screenshot({path:out+'/reports-usability-failure.png',fullPage:true});throw error}finally{await browser.close()}

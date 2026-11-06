@@ -1,3 +1,4 @@
+import {assessIncident} from '../src/data/reportingRequirements.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 globalThis.localStorage={getItem:()=>null,setItem:()=>{}};
@@ -12,5 +13,5 @@ test('MRO Reporter can reopen an investigation revision for an owned or assigned
 test('regional role edits cannot grant central powers and correction links follow the author workspace',()=>{
  store.reset();store.signIn('u-investigator');store.update('roles','reporter',{permissions:['read','report','review','investigate','admin','configure','manage_accounts','audit']});store.signIn('u-reporter');for(const action of ['admin','configure','manage_accounts','audit'])assert.equal(store.can(action),false);
  const owned=store.getEvent('e-003');assert.doesNotThrow(()=>store.saveEvent({...owned,summary:'Authorized overlapping edit'}));
- store.signIn('u-reviewer');const report=store.saveEvent({...store.newEvent(),dateUnknown:true,type:'Collision',place:'Fictional regional port',summary:'Regional author',vessels:[{...store.newVessel(),name:'Regional example'}]},{submit:true});store.transition(report.id,'under_review');store.transition(report.id,'correction_requested','Clarify facts');const notice=store.state.notifications.find(n=>n.userId==='u-reviewer'&&n.title==='Correction requested');assert.equal(notice.link,'/admin/incidents/'+report.id);
+ store.signIn('u-reviewer');const data={...store.newEvent(),dateUnknown:true,type:'Collision',place:'Fictional regional port',summary:'Regional author'};data.vessels[0].name='Regional example';data.reportingExceptions={};for(const item of assessIncident(data).unresolved)data.reportingExceptions[item.key]={status:'unknown',reason:'Fictional initial source information is awaiting verification.'};const report=store.saveEvent(data,{submit:true});store.transition(report.id,'under_review');store.transition(report.id,'correction_requested','Clarify facts');const notice=store.state.notifications.find(n=>n.userId==='u-reviewer'&&n.title==='Correction requested');assert.equal(notice.link,'/admin/incidents/'+report.id);
 });

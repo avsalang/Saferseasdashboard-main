@@ -1,4 +1,26 @@
-# Verification — SAFERSEAS intake additions
+# Verification — MARINA terminology and required information
+
+Verified on 6 November 2026 against the current Vue/Quasar mockup and fictional records.
+
+| Current check | Result |
+|---|---|
+| Unit/regression suite | 87 passed |
+| Production build | Passed |
+| Routes | 55 checks; no browser exceptions, viewport overflow or missing headings |
+| Standard labels / required incident fields | Passed: missing required facts block submission, partial drafts save, explicit reasons persist, zero/null remain distinct |
+| MAIC and case requirements | 14 browser checks passed: partial drafts, content review gate, issue-only director noting, receipt after issue, exception appendix, conditional SCO and case fields |
+| Working-copy exports | Catalogue, GIS, analytics and incident register all require acknowledgement and preserve incomplete status / gaps in their files and retained snapshots |
+| Correction workflows | Reporter and reviewer-authored workflows passed, 18 checks each |
+| Report usability and snapshots | 22 checks passed; all 22 families reachable and exact snapshot redownload retained |
+| Roles / permissions | 23 checks passed; three account types and operational overlap preserved |
+| Independent review | Source/output-grain/receipt/sentinel/exception-retirement findings resolved; final bounded recheck found no remaining blocker |
+
+[Field standards and required-stage matrix](FIELD_STANDARDS_AND_REQUIREMENTS.md) is the current developer contract. Required information is an application completion policy derived from supplied sources; no legal rule or factual value is invented. Existing issued content remains frozen, with separate audited receipt metadata. Previously saved output snapshots remain available unchanged.
+
+The new browser scripts are `tests/required-fields.mjs`, `tests/output-completeness.mjs` and `src/pages/operations/reportRequirements.browser.mjs`. They use fictional local browser state. The new requirements unit tests are included in `npm test`.
+
+## Previous intake release evidence
+
 
 Verified on 6 November 2026. The existing seven-section incident form is retained with additive MARINA fields and digital location/weather assistance. Desktop is the priority.
 

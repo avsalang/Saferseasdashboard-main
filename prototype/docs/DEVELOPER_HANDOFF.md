@@ -10,6 +10,8 @@ Read the [usability rework](USABILITY_REWORK.md) for the current navigation, tas
 
 **Incident intake:** Keep the existing SAFERSEAS form and its improvements, adding missing MARINA information within the original seven sections. The [incident form additions and data contract](INCIDENT_FORM_ADDITIONS.md) supersede the earlier five-step intake simplification. MAIC is the information/output reference, while detailed investigation work remains in the investigation workspace.
 
+**Current field policy:** [MARINA field standards and requirements](FIELD_STANDARDS_AND_REQUIREMENTS.md) defines recognizable labels, submission/validation/issue requirements, explicit unknown handling and incomplete-working-copy exports. It supersedes earlier wording that all optional or unknown information could be left silently blank.
+
 ## Start and review
 
 Use Node 22 or newer. From `prototype/`:

@@ -1,4 +1,7 @@
 <script setup>
+import {useQuasar} from 'quasar'
+import {assessOutput,assessRequirements,reportingAssessmentMetadata} from '../../data/reportingRequirements.js'
+import {confirmReportingExport,reportingExportRows} from '../../lib/reportingExport.js'
 import { computed,ref,watch,onMounted,onBeforeUnmount,nextTick } from 'vue'
 import * as echarts from 'echarts/core'
 import { BarChart } from 'echarts/charts'
@@ -6,14 +9,14 @@ import { GridComponent,TooltipComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useDemo } from '../../stores/demo.js'
 import { downloadCSV } from '../../lib/exports.js'
-const store=useDemo(),tab=ref('patterns'),dimension=ref('type'),element=ref(null)
+const q=useQuasar(),store=useDemo(),tab=ref('patterns'),dimension=ref('type'),element=ref(null)
 echarts.use([BarChart,GridComponent,TooltipComponent,CanvasRenderer])
 const selection=computed({get:()=>store.state.selection,set:v=>{store.state.selection=v;store.persist()}})
 const showFilters=ref(false),draft=ref({})
 const tabs=[{id:'patterns',num:1,label:'Incident patterns'},{id:'offices',num:2,label:'Geography & vessels'},{id:'consequences',num:3,label:'Consequences'},{id:'quality',num:4,label:'Data quality'}]
 const activeTabObj=computed(()=>tabs.find(item=>item.id===tab.value)||tabs[0])
 const activeChips=computed(()=>Object.entries(selection.value).filter(([,value])=>value&&String(value).toLowerCase()!=='all').map(([key,value])=>({key,label:`${key}: ${value}`})))
-const filterFields=[['year','Year'],['type','Incident type'],['seriousness','Seriousness'],['aor','Area of responsibility'],['homeport','Homeport office'],['cpc','CPC office'],['issuingOffice','Actual issuing office'],['positionQuality','Position quality'],['vesselType','Vessel service']]
+const filterFields=[['year','Year'],['type','Type of Incident / Accident'],['seriousness','Level of Maritime Accident (MARINA)'],['aor','Area of Responsibility (AOR)'],['homeport','Homeport Office'],['cpc','CPC Issuing Office'],['issuingOffice','Actual Issuing MRO'],['positionQuality','Position Quality'],['vesselType','Type of Ship']]
 function optionsFor(key){return [...new Set(store.visibleEvents.value.flatMap(event=>key==='year'?[event.dateUnknown?null:event.date?.slice(0,4)]:key==='vesselType'?(event.vessels||[]).map(v=>v.type):[event[key]]).filter(Boolean))].sort()}
 function resetDraft(){draft.value=Object.fromEntries(filterFields.map(([key])=>[key,'All']))}
 function openFilters(){resetDraft();Object.entries(selection.value).forEach(([key,value])=>{draft.value[key]=String(value).toLowerCase()==='all'?'All':value});showFilters.value=true}
@@ -21,7 +24,7 @@ function applyFilters(){selection.value={...draft.value};showFilters.value=false
 function removeChip(key){const next={...selection.value};delete next[key];selection.value=next}
 function setActiveTab(id){tab.value=id;if(id==='offices')dimension.value='aor'}
 const events=computed(()=>store.selectEvents(selection.value)),summary=computed(()=>store.summarize(events.value))
-const dimensions=[{label:'Incident type',value:'type'},{label:'Seriousness',value:'seriousness'},{label:'Occurrence month',value:'month'},{label:'Vessel service (involvements)',value:'vesselType'},{label:'Area of responsibility',value:'aor'},{label:'Homeport office',value:'homeport'},{label:'CPC office',value:'cpc'},{label:'Actual issuing office',value:'issuingOffice'}]
+const dimensions=[{label:'Type of Incident / Accident',value:'type'},{label:'Level of Maritime Accident (MARINA)',value:'seriousness'},{label:'Occurrence month',value:'month'},{label:'Type of Ship (vessel involvements)',value:'vesselType'},{label:'Area of Responsibility (AOR)',value:'aor'},{label:'Homeport Office',value:'homeport'},{label:'CPC Issuing Office',value:'cpc'},{label:'Actual Issuing MRO',value:'issuingOffice'}]
 const rows=computed(()=>{
  if(tab.value==='consequences')return ['fatalities','missing','injured','rescued','totalOnboard','crew','passengers'].map(key=>({Category:key,Count:events.value.reduce((sum,e)=>sum+(e.consequences?.[key]??0),0),Unit:'Known persons',Unknown:events.value.filter(e=>e.consequences?.[key]==null).length}))
  if(tab.value==='quality')return [{Category:'Unknown occurrence date',Count:events.value.filter(e=>!e.date).length,Unit:'Events'},{Category:'Unknown occurrence time',Count:events.value.filter(e=>!e.time).length,Unit:'Events'},{Category:'Unknown seriousness',Count:events.value.filter(e=>!e.seriousness||e.seriousness==='unknown').length,Unit:'Events'},{Category:'Approximate position',Count:events.value.filter(e=>e.positionQuality==='approximate').length,Unit:'Events'},{Category:'Unlocated',Count:events.value.filter(e=>e.positionQuality==='unknown'||e.lat==null||e.lon==null).length,Unit:'Events'},{Category:'No source lineage',Count:events.value.filter(e=>!e.sourceLineage?.row).length,Unit:'Events'},{Category:'Unknown gross tonnage',Count:events.value.flatMap(e=>e.vessels||[]).filter(v=>v.grossTonnage==null).length,Unit:'Vessel involvements'}]
@@ -31,6 +34,17 @@ const rows=computed(()=>{
  return [...groups].map(([Category,Count])=>({Category,Count,Unit:key==='vesselType'?'Vessel involvements':'Events'})).sort((a,b)=>b.Count-a.Count)
 })
 const columns=computed(()=>[{name:'category',label:'Dimension / measure',field:'Category',align:'left'},{name:'count',label:tab.value==='consequences'?'Known persons':'Count',field:'Count'},{name:'unit',label:'Unit',field:'Unit'},...(tab.value==='consequences'?[{name:'unknown',label:'Events with unknown value',field:'Unknown'}]:[])])
+const analyticsReadiness=computed(()=>{
+ if(tab.value==='quality')return assessOutput('O22',events.value)
+ if(tab.value==='consequences')return assessOutput('O11',events.value)
+ const key=dimension.value,items=[]
+ for(const event of events.value){
+  if(key==='vesselType')items.push(...assessOutput('O05',[event]).items.filter(item=>item.field==='type'))
+  else{const field=key==='month'?'date':key;const value=field==='date'&&event.dateUnknown?null:event[field];items.push(...assessRequirements([{key:field,label:dimensions.find(d=>d.value===key)?.label||field,value,allowNotApplicable:false}],event.reportingExceptions).items.map(item=>({...item,eventId:event.id,eventRef:event.ref})))}
+ }
+ return {items,unresolved:items.filter(item=>item.status==='missing'),explained:items.filter(item=>item.status==='explained'),ready:items.every(item=>item.status!=='missing')}
+})
+async function exportAnalytics(){if(await confirmReportingExport(q,analyticsReadiness.value))downloadCSV('analytics-'+tab.value+'.csv',reportingExportRows(rows.value,analyticsReadiness.value))}
 let chart,observer
 async function draw(){await nextTick();if(!element.value)return;if(!chart)chart=echarts.init(element.value);chart.setOption({animationDuration:250,grid:{left:170,right:35,top:20,bottom:40,containLabel:false},tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},xAxis:{type:'value',minInterval:1,name:tab.value==='consequences'?'Known persons':'Count'},yAxis:{type:'category',data:rows.value.map(r=>r.Category).reverse(),axisLabel:{width:155,overflow:'truncate'}},series:[{type:'bar',data:rows.value.map(r=>r.Count).reverse(),itemStyle:{color:tab.value==='quality'?'#b7791f':'#2b6cb0',borderRadius:[0,5,5,0]},label:{show:true,position:'right'}}]},true)}
 watch([rows,tab],draw);onMounted(()=>{draw();observer=new ResizeObserver(()=>chart?.resize());if(element.value)observer.observe(element.value)});onBeforeUnmount(()=>{observer?.disconnect();chart?.dispose()})
@@ -43,9 +57,9 @@ watch([rows,tab],draw);onMounted(()=>{draw();observer=new ResizeObserver(()=>cha
         <div class="col-12 col-sm-auto row items-center q-gutter-x-sm text-caption text-weight-medium" style="font-size:13px;color:#5b6478">
           <q-icon name="dashboard" color="primary" size="xs" /><router-link to="/admin" style="color:#5b6478;text-decoration:none" class="hover-primary">Dashboard</router-link><q-icon name="chevron_right" color="grey-5" size="xs" /><span style="color:#8b93a3">Monitoring</span><q-icon name="chevron_right" color="grey-5" size="xs" /><span style="color:#0e2a6e;font-weight:600">Analytics</span>
         </div>
-        <div class="col-12 col-sm-auto"><div class="row q-col-gutter-x-sm"><div class="col-6 col-sm-auto"><button class="btn full-width justify-center" @click="openFilters"><q-icon name="tune" size="16px" class="q-mr-xs" />Filters<span class="filter-badge">{{activeChips.length}}</span></button></div><div class="col-6 col-sm-auto"><button v-if="store.can('export')" class="btn full-width justify-center" @click="downloadCSV('analytics-'+tab+'.csv',rows)"><q-icon name="download" size="16px" class="q-mr-xs" />Export CSV</button></div></div></div>
+        <div class="col-12 col-sm-auto"><div class="row q-col-gutter-x-sm"><div class="col-6 col-sm-auto"><button class="btn full-width justify-center" @click="openFilters"><q-icon name="tune" size="16px" class="q-mr-xs" />Filters<span class="filter-badge">{{activeChips.length}}</span></button></div><div class="col-6 col-sm-auto"><button v-if="store.can('export')" class="btn full-width justify-center" @click="exportAnalytics"><q-icon name="download" size="16px" class="q-mr-xs" />Export CSV</button></div></div></div>
       </div>
-      <div class="notice"><b>Reported-data note —</b> metrics use fictional scoped incident records. They are not exposure-normalized. Event, vessel-involvement and person denominators remain distinct; unknown values are not observed zero.</div>
+      <q-banner v-if="!analyticsReadiness.ready" dense class="bg-orange-1 text-dark q-mb-md">INCOMPLETE WORKING COPY · {{analyticsReadiness.unresolved.length}} required reporting field(s) remain unresolved.</q-banner><div class="notice"><b>Reported-data note —</b> metrics use fictional scoped incident records. They are not exposure-normalized. Event, vessel-involvement and person denominators remain distinct; unknown values are not observed zero.</div>
       <div class="active-chips"><span v-for="chip in activeChips" :key="chip.key" class="chip">{{chip.label}}<button @click="removeChip(chip.key)" :aria-label="'Remove '+chip.key">×</button></span><button v-if="activeChips.length" class="chip-clear" @click="selection={}">Reset filters</button></div>
       <div class="mobile-tabs-menu q-mb-md"><q-btn unelevated class="full-width mobile-tab-select-btn" no-caps><div class="row items-center justify-between full-width"><div class="row items-center q-gutter-x-sm"><span class="tab-num-badge">{{activeTabObj.num}}</span><span class="text-weight-bold">{{activeTabObj.label}}</span></div><q-icon name="menu" size="20px" class="burger-icon" /></div><q-menu fit anchor="bottom left" self="top left" class="mobile-tabs-dropdown-menu"><q-list style="min-width:200px"><q-item v-for="item in tabs" :key="item.id" clickable v-close-popup :active="tab===item.id" active-class="active-mobile-tab" @click="setActiveTab(item.id)"><q-item-section avatar class="min-width-auto q-pr-sm"><span class="tab-num-badge small-badge">{{item.num}}</span></q-item-section><q-item-section><q-item-label class="text-weight-medium">{{item.label}}</q-item-label></q-item-section></q-item></q-list></q-menu></q-btn></div>
       <div class="tabbar" role="tablist"><button v-for="item in tabs" :key="item.id" :class="['tab',{active:tab===item.id}]" role="tab" :aria-selected="tab===item.id" @click="setActiveTab(item.id)"><span class="tab-num">{{item.num}}</span>{{item.label}}</button></div>

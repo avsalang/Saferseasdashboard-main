@@ -1,3 +1,4 @@
+import {explainVisibleRequirements} from './requirements-browser-helper.mjs';
 import {chromium} from 'playwright';
 import fs from 'node:fs/promises';
 const BASE=process.env.BASE_URL||'http://127.0.0.1:5174/';const out='test-artifacts';await fs.mkdir(out,{recursive:true});
@@ -29,10 +30,10 @@ try{
 
  await login('MRO Reviewer MRO-IV');await page.goto(BASE+'#/admin/incidents');
  await page.getByRole('link',{name:'New incident',exact:true}).click();
- await fill('Occurrence date','2026-11-06');await select('Primary incident type *','Grounding');
- await fill('Reported place / location *','QA reviewer fictional harbor');
- await step('Narrative & Timeline');await fill('Factual account / description *','Fictional reviewer-authored two-vessel event for correction and resubmission verification.');
- await step('Vessel & Operator');await fill('Vessel name *','MV Reviewer Fictional Horizon');await fill('Gross tonnage (GT)','34.76');
+ await fill('Date of Incident / Accident *','2026-11-06');await select('Type of Incident / Accident — Initial Event *','Grounding');
+ await fill('Location of Incident / Accident *','QA reviewer fictional harbor');
+ await step('Narrative & Timeline');await fill('Narrative of Events Leading to the Accident *','Fictional reviewer-authored two-vessel event for correction and resubmission verification.');
+ await step('Vessel & Operator');await fill('Name of Ship/Vessel *','MV Reviewer Fictional Horizon');await fill('Gross Tonnage (GT) *','34.76');
  stored=await state();const reusable=stored.vessels.find(v=>v.officeId==='MRO-IV');
  await select('Use a vessel from your directory',`${reusable.name} · ${reusable.officialNumber||'No official no.'}`);
  await page.getByRole('button',{name:'Add selected vessel',exact:true}).click();
@@ -43,7 +44,7 @@ try{
  stored=await state();let event=stored.events.find(e=>e.id===recordId);
  check(event.status==='draft'&&event.ownerId==='u-reviewer'&&event.officeId==='MRO-IV','reviewer authored draft persists under its issued owner and office after reload');
  check(event.vessels.length===2&&event.vessels[0].grossTonnage===34.76&&event.evidenceIds.length===1,'reviewer draft retains two vessels, decimal GT and evidence metadata');
- await step('Review & Submit');await page.getByRole('button',{name:'Submit report',exact:true}).click();await page.waitForURL('**/'+recordId);
+ await step('Review & Submit');await explainVisibleRequirements(page);await page.getByRole('button',{name:'Submit report',exact:true}).click();await page.waitForURL('**/'+recordId);
  stored=await state();event=stored.events.find(e=>e.id===recordId);
  check(event.status==='submitted'&&stored.reports.filter(r=>r.eventId===recordId&&r.type==='spot').length===1,'reviewer submits its own report and creates the first spot revision');
 
@@ -63,8 +64,8 @@ try{
  check(await page.locator('.correction-note').getByText(correctionText,{exact:true}).isVisible(),'reviewer opens the actual correction notification and sees its instructions');
  stored=await state();check(stored.notifications.find(n=>n.id===notice.id).read===true,'opening the correction notification marks it read');
  await page.getByRole('link',{name:'Edit particulars',exact:true}).click();
- await fill('Reported place / location *','QA reviewer fictional harbor, clarified east approach');
- await step('Review & Submit');
+ await fill('Location of Incident / Accident *','QA reviewer fictional harbor, clarified east approach');
+ await step('Review & Submit');await explainVisibleRequirements(page);
  check(await page.getByRole('button',{name:'Resubmit report',exact:true}).isVisible(),'staff correction editor exposes the Resubmit report primary action');
  await page.screenshot({path:out+'/reviewer-author-resubmit-action.png',fullPage:true});
  await page.getByRole('button',{name:'Resubmit report',exact:true}).click();await page.waitForURL('**/admin/incidents/'+recordId);
@@ -77,7 +78,7 @@ try{
  check(event.vessels.length===2&&event.evidenceIds.length===1&&revisions.every(r=>r.evidenceIds.length===1),'resubmission retains both vessel snapshots and evidence in both revisions');
  check(['fatalities','missing','injured','rescued','totalOnboard','crew','passengers'].every(key=>event.consequences[key]===null),'all untouched consequence counts remain unknown after reviewer resubmission');
  await page.screenshot({path:out+'/reviewer-author-resubmitted.png',fullPage:true});
- await page.getByRole('link',{name:'Edit particulars',exact:true}).click();await step('Review & Submit');
+ await page.getByRole('link',{name:'Edit particulars',exact:true}).click();await step('Review & Submit');await explainVisibleRequirements(page);
  check(await page.getByRole('button',{name:'Save incident changes',exact:true}).isVisible()&&await page.getByRole('button',{name:'Resubmit report',exact:true}).count()===0,'other non-draft staff edits retain the Save incident changes action');
  await page.getByRole('button',{name:'Save incident changes',exact:true}).click();stored=await state();
  check(stored.events.find(e=>e.id===recordId).status==='resubmitted'&&stored.reports.filter(r=>r.eventId===recordId&&r.type==='spot').length===2,'saving other staff edits does not resubmit again or create a third revision');
