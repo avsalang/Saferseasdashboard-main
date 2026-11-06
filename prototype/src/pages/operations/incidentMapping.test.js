@@ -5,6 +5,16 @@ import { initialFields, initializeFields, maicGroups } from './maic.js'
 import { buildOutput } from '../../data/catalogue.js'
 import { buildMAICSections, buildSpotSections, selectReportRevision } from '../data/reportLogic.js'
 
+test('initial information receipt is retained in source report context, separately from MARINA report receipt',()=>{
+ const event={...fixture(),receivedDate:'2026-05-10'}
+ assert.match(initialFields(event).informationSources,/Initial information received: 2026-05-10/)
+ assert.ok(buildSpotSections({event}).some(section=>section.content.includes('Initial information received: 2026-05-10')))
+})
+test('an unavailable intake receipt date does not invent source information',()=>{
+ const event={...fixture(),receivedDate:'',sourceType:'',sourceRef:'',reportingAuthority:'',sourceNotes:'',documentNotes:''}
+ assert.equal(initialFields(event).informationSources,'')
+})
+
 const fixture = () => ({
   id:'mapping-event',ref:'DEMO-MAPPING',date:'2026-11-06',time:'09:15',dateUnknown:false,timeUnknown:false,type:'Grounding',secondaryTypes:[],seriousness:'serious',place:'Fictional approach',lat:0,lon:0,positionQuality:'reported',officeId:'MRO-IV',aor:'MRO-IV',homeport:'MRO-NCR',cpc:'MRO-VII',issuingOffice:'MRO-IV',status:'submitted',ownerId:'fictional-reporter',
   summary:'Initial factual account.',timeline:'09:10 alarm; 09:15 assistance requested.',crewResponse:'Crew secured the machinery and checked persons aboard.',crewFactors:['Communication','Fatigue / fitness'],potentialCauses:'A machinery problem may have contributed; not yet established.',findingsOfCause:'Records require further inspection before concluding.',damageTypes:['Hull damage','Cargo damage'],reportingAuthority:'Fictional regional operations desk',rescueRecovery:'All known persons accounted for; recovery pending.',certificates:'Survey certificate reference DEMO-CERT; validity under review.',sourceType:'Source report',sourceRef:'DEMO-SOURCE',sourceNotes:'Telephone account awaiting written confirmation.',documentNotes:'Photograph has no verified capture time.',initialActions:'Requested assistance.',recommendations:'Obtain maintenance records.',evidenceIds:[],

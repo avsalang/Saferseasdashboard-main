@@ -63,7 +63,7 @@ The following table is generated from the shared requirement definitions. All en
 | sourceType | Source of Information — Type | Incident submission | Spot Report; MAIC Form 1B; MAIC Form 2; MAIC Form 3B | Unknown, with reason |
 | sourceRef | Source of Information — Reference | Incident submission | Annual Master List; Spot Report; MAIC Form 1B; MAIC Form 2; MAIC Form 3B | Unknown, with reason |
 | reportingAuthority | Reporting Authority / Organization | Incident submission | Spot Report; MAIC Form 1B; MAIC Form 2; MAIC Form 3B | Unknown, with reason |
-| receivedDate | Date Received | Incident submission | MAIC Report Receipt Summary; Spot Report; MAIC Form 1B; MAIC Form 2 | Unknown, with reason |
+| receivedDate | Date Received | Incident submission | Spot Report; MAIC Form 1B; MAIC Form 2; MAIC Form 3B | Unknown, with reason |
 | consequences.fatalities | Fatalities | Incident submission | Annual Master List; Human and Ship Consequences; Spot Report; MAIC Form 1B; MAIC Form 2; MAIC Form 3B | Unknown, with reason |
 | consequences.missing | Missing Persons | Incident submission | Annual Master List; Human and Ship Consequences; Spot Report; MAIC Form 1B; MAIC Form 2; MAIC Form 3B | Unknown, with reason |
 | consequences.injured | Injured Persons | Incident submission | Annual Master List; Human and Ship Consequences; Spot Report; MAIC Form 1B; MAIC Form 2; MAIC Form 3B | Unknown, with reason |

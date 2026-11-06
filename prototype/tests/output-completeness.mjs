@@ -11,6 +11,7 @@ const contents=async promise=>fs.readFile(await(await promise).path(),'utf8')
 try{
  await page.goto(base,{waitUntil:'networkidle'});await page.getByRole('button',{name:'MARINA Investigator MRO-NCR',exact:true}).click()
  await go('/admin/reports/build/O20')
+ await page.getByText('Incomplete Working Copy',{exact:true}).waitFor()
  assert.ok(await page.getByText('Incomplete Working Copy',{exact:true}).isVisible())
  assert.equal(await page.getByRole('button',{name:'Download CSV',exact:true}).isDisabled(),true)
  await acknowledgeWorkingCopy(page);let download=page.waitForEvent('download');await page.getByRole('button',{name:'Download CSV',exact:true}).click()

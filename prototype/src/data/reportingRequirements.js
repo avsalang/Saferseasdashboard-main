@@ -23,7 +23,7 @@ const eventFields=[
  ['sourceType','Source of Information — Type',6,['O15','O16','O17','O18']],
  ['sourceRef','Source of Information — Reference',6,['O01','O15','O16','O17','O18']],
  ['reportingAuthority','Reporting Authority / Organization',6,['O15','O16','O17','O18']],
- ['receivedDate','Date Received',6,['O13','O15','O16','O17']],
+ ['receivedDate','Date Received',6,['O15','O16','O17','O18']],
  ...[['fatalities','Fatalities'],['missing','Missing Persons'],['injured','Injured Persons'],['rescued','Survivors / Rescued Persons'],['crew','Number of Crew'],['passengers','Number of Passengers'],['totalOnboard','Total Persons on Board'],['shipCondition','Ship Condition'],['pollution','Oil / Chemical Pollution — Substance']].map(([key,label])=>[`consequences.${key}`,label,['crew','passengers','totalOnboard'].includes(key)?3:5,['O01','O11','O15','O16','O17','O18'],{allowNotApplicable:key==='pollution'}])
 ]
 const vesselFields=[

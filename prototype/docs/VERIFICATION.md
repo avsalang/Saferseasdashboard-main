@@ -4,7 +4,7 @@ Verified on 6 November 2026 against the current Vue/Quasar mockup and fictional 
 
 | Current check | Result |
 |---|---|
-| Unit/regression suite | 87 passed |
+| Unit/regression suite | 89 passed |
 | Production build | Passed |
 | Routes | 55 checks; no browser exceptions, viewport overflow or missing headings |
 | Standard labels / required incident fields | Passed: missing required facts block submission, partial drafts save, explicit reasons persist, zero/null remain distinct |
