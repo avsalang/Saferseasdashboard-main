@@ -22,4 +22,10 @@ The three confirmed account types are MRO Reporter, MRO Reviewer and MARINA Inve
 
 Tests establish mockup behavior, not backend security, official MARINA approval, real upload/email processing, approved risk/legal rules or signed official forms. PDF remains browser print/save. All supplied MARINA files remain outside this public demonstration.
 
-The previous version was published and checked. Deployment and live checks for this usability revision are recorded below after publication.
+## Published desktop revision
+
+[Deployment 42161871084](https://github.com/avsalang/Saferseasdashboard-main/actions/runs/42161871084) successfully installed locked dependencies, passed all 33 unit/regression checks, built and deployed the site. App source: `a0fe102af963ad3d91ad421ff25f6890f92964cd`.
+
+[The live site](https://avsalang.github.io/Saferseasdashboard-main/) passed 19 desktop checks across the three account types: task-first pages, separate review/correction queues, shared operational access, explicit incident choice for documents, central-only controls and repository-subpath refresh. No page exceptions. See [live acceptance](live-acceptance-results.json).
+
+Desktop usability is the primary target, per the user's latest instruction. Existing responsive behavior is retained without a separate mobile redesign.

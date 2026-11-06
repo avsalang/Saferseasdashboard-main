@@ -7,7 +7,7 @@ User approved the complete Vue/Quasar mockup, verification and update of the exi
 - Operations, MAIC revisions, cases/actions, registry and administration: complete.
 - Imports, reconciliation, 22 outputs, GIS, analytics, risk/policy: complete within documented prototype boundaries.
 - Developer handoff, 49-ID/22-output mapping, independent defect review and browser acceptance: complete.
-- Repository integration and live Pages verification: complete. Published source b5d841c; GitHub Actions run 42156571634 succeeded and the live site passed acceptance.
+- Repository integration and live Pages verification: complete. Latest published source a0fe102; GitHub Actions run 42161871084 succeeded and the desktop site passed acceptance.
 
 Material review fixes include scoped linked records/artifact history; preserved evidence and unique references on draft discard; visible storage failure; immutable complete output snapshots; archive access after import reversal; saved MAIC/spot observations/evidence; and retained import blockers. See tests and acceptance results.
 
@@ -19,7 +19,7 @@ Confirmed types: MRO Reporter, MRO Reviewer, MARINA Investigator. The user expli
 
 Completed: corrections/drafts first; compact essential intake; shared operational tools; labeled grouped navigation; received/update review queue; five-section review; staged MAIC editing; common reports and choose/preview/download; explicit incident selection; preserved fields/revisions/evidence/exports. Account migration, central privilege caps, scope and both author correction cycles verified. See USABILITY_REWORK.md and VERIFICATION.md.
 
-Latest rework deployment: pending publication and live acceptance.
+Latest rework deployment: complete. Run 42161871084 passed; 19 published desktop checks passed across all three accounts.
 
 ## Account and usability rework
 
@@ -27,4 +27,4 @@ Confirmed types: MRO Reporter, MRO Reviewer, MARINA Investigator. The user expli
 
 Completed: corrections/drafts first; compact essential intake; shared operational tools; labeled grouped navigation; received/update review queue; five-section review; staged MAIC editing; common reports and choose/preview/download; explicit incident selection; preserved fields/revisions/evidence/exports. Account migration, central privilege caps, scope and both author correction cycles verified. See USABILITY_REWORK.md and VERIFICATION.md.
 
-Latest rework deployment: pending publication and live acceptance.
+Latest rework deployment: complete. Run 42161871084 passed; 19 published desktop checks passed across all three accounts.
