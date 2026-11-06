@@ -32,12 +32,12 @@
           </q-avatar>
         </div>
 
-        <div v-if="!miniState" class="row justify-end q-px-md q-pb-xs"><q-btn flat round dense size="sm" :icon="navigationPinned?'push_pin':'vertical_align_center'" :aria-label="navigationPinned?'Collapse menu':'Keep menu open'" @click="navigationPinned=!navigationPinned;miniState=!navigationPinned"><q-tooltip>{{navigationPinned?'Collapse menu':'Keep menu open'}}</q-tooltip></q-btn></div>
+
         <q-scroll-area class="col relative-position">
           <q-list class="q-px-md nav-list">
             <template v-for="item in filteredNavItems" :key="item.label">
               <!-- Level 1 Group -->
-              <q-expansion-item
+              <StaticSection
                 v-if="item.children"
                 :icon="item.icon"
                 :label="item.label"
@@ -50,7 +50,7 @@
                 <q-list class="q-pl-lg">
                   <template v-for="child in item.children" :key="child.label">
                     <!-- Level 2 Group -->
-                    <q-expansion-item
+                    <StaticSection
                       v-if="child.children"
                       :label="child.label"
                       :icon="child.icon"
@@ -77,7 +77,7 @@
                           </q-item-section>
                         </q-item>
                       </q-list>
-                    </q-expansion-item>
+                    </StaticSection>
 
                     <!-- Level 2 Single Item -->
                     <q-item
@@ -97,7 +97,7 @@
                 </q-list>
 
                 <q-tooltip v-if="miniState" anchor="center right" self="center left" :offset="[14, 14]" class="glass-tooltip">{{ item.label }}</q-tooltip>
-              </q-expansion-item>
+              </StaticSection>
 
               <!-- Single Item -->
               <q-item

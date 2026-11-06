@@ -1,3 +1,4 @@
+import {ensureMarinaOffices} from '../data/marinaOffices.js'
 import {assessReport,assessCase} from '../pages/operations/reportRequirements.js'
 import {assessIncident} from '../data/reportingRequirements.js'
 import { reactive, computed, watch } from 'vue';
@@ -7,7 +8,7 @@ import {migrateAccountModel} from '../data/accounts.js';
 const KEY='saferseas-marina-vue-demo-v1';
 const uid=prefix=>prefix+'-'+(globalThis.crypto?.randomUUID?.()||Math.random().toString(36).slice(2));
 let loaded;try{loaded=JSON.parse(localStorage.getItem(KEY)||'null');}catch{}
-const state=reactive(migrateAccountModel(loaded));
+const state=reactive(ensureMarinaOffices(migrateAccountModel(loaded)));
 const currentUser=computed(()=>{const u=state.users.find(u=>u.id===state.sessionUserId&&u.status==='active');if(!u||!Object.hasOwn(rolePermissions,u.role))return null;const role=state.roles.find(r=>r.id===u.role);return {...u,scope:u.role==='investigator'?'all':u.scope,permissions:u.role==='investigator'?rolePermissions.investigator:(role?.permissions||rolePermissions[u.role]||[]).filter(p=>operationalPermissions.includes(p))};});
 const can=(action,event)=>canAccess(currentUser.value,action,event);
 const visibleEvents=computed(()=>state.events.filter(e=>can('read',e)));

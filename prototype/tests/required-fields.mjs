@@ -13,6 +13,8 @@ try{
  await page.goto(base,{waitUntil:'networkidle'});await page.getByRole('button',{name:'MRO Reporter MRO-IV',exact:true}).click();await page.goto(base+'#/reporter/reports/new')
  await fill('Date of Incident / Accident *','2026-11-06');await fill('Location of Incident / Accident *','Fictional test anchorage')
  await step('Vessel & Operator');await fill('Name of Ship/Vessel *','MV Fictional Required Test');await fill('Gross Tonnage (GT) *','0')
+ await field('Size Classification *').click();await page.getByRole('option',{name:'N/A (source reporting marker)',exact:true}).click();
+ const sizeException=page.locator('[data-testid="field-exception"][data-requirement-key$=":sizeClass"]');await sizeException.locator('.q-select').click();await page.getByRole('option',{name:'Not Applicable',exact:true}).click();await sizeException.locator('textarea').fill('The source explicitly records size classification as N/A.');
  await page.getByText('Identity and registration',{exact:true}).click();assert.equal(await field('Call Sign').count(),1);assert.equal(await field('Type of Operation').count(),1)
  await step('Narrative & Timeline');await fill('Narrative of Events Leading to the Accident *','Fictional report for required field verification.')
  await step('Review & Submit');await page.getByRole('button',{name:'Submit report',exact:true}).click()
@@ -23,8 +25,8 @@ try{
  await step('Review & Submit');await explainVisibleRequirements(page)
  await page.getByRole('button',{name:'Submit report',exact:true}).click();await page.waitForURL('**/'+id)
  const data=await state(),event=data.events.find(e=>e.id===id),report=data.reports.find(r=>r.eventId===id&&r.type==='spot')
- assert.equal(event.status,'submitted');assert.equal(event.consequences.fatalities,null);assert.equal(event.vessels[0].grossTonnage,0)
+ assert.equal(event.vessels[0].sizeClass,'N/A');assert.ok(Object.entries(event.reportingExceptions).some(([key,value])=>key.endsWith(':sizeClass')&&value.status==='not_applicable'));assert.equal(event.status,'submitted');assert.equal(event.consequences.fatalities,null);assert.equal(event.vessels[0].grossTonnage,0)
  assert.ok(event.reportingExceptions.aor.reason);assert.equal(report.fields.reportingExceptions.aor.reason,event.reportingExceptions.aor.reason)
  assert.deepEqual(errors,[])
  console.log('PASS: standard MARINA labels and missing particulars, blocking required checks, partial drafts, explicit exceptions, zero/null and spot snapshot preservation')
-}finally{await browser.close()}
+}catch(error){console.log(JSON.stringify({alerts:await page.getByRole('alert').allTextContents(),inline:await page.locator('[data-testid="field-exception"]').allTextContents()},null,2));throw error}finally{await browser.close()}

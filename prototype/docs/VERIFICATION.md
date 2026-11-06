@@ -1,4 +1,46 @@
-# Verification — MARINA terminology and required information
+# Verification — MARINA dropdowns and visible form sections
+
+Verified on 6 November 2026 against fictional browser records. The current pass supersedes earlier accordion/central-requirements presentation.
+
+| Check | Result |
+|---|---|
+| Unit/regression suite | 106 passed |
+| Production build | Passed |
+| Route acceptance | 55 checks; no browser exceptions, overflow or missing headings |
+| Workbook vocabulary | Direct cross-check of the supplied 2024/2025 DROPDOWN sheets; MAIC and historical additions documented in the source crosswalk |
+| Flat sections and dropdown persistence | Passed: no incident accordions or separate requirements panel; source choices save exactly; unlisted owner and port values persist on blur |
+| Required information | Passed: incomplete submission blocked, partial drafts save, field-local exceptions persist, source N/A size-class declaration submits, zero/null preserved |
+| Digital intake | Seven sections and added fields pass save/reopen/review; map click/zero coordinates, weather provenance and manual corrections pass |
+| Correction cycles | Reporter and reviewer-authored journeys, 18 checks each |
+| Investigation/case/receipt | 23 checks pass, including free damage/weather text, review/issue gates, immutable issued content and post-issue receipt |
+| Reports | 22 usability/snapshot checks pass; catalogue, GIS, analytics and register working-copy exports pass |
+| Account access | 23 browser checks pass; three account types and operational overlap preserved |
+| Independent review | Reported data-loss, N/A, narrative, configuration, office grouping/scope and directory inconsistencies fixed; bounded recheck found no remaining blocker |
+
+See [dropdown source crosswalk](DROPDOWN_SOURCE_CROSSWALK.md) and [field requirements](FIELD_STANDARDS_AND_REQUIREMENTS.md). Browser scripts exercise actual controls with fictional data; weather responses in browser tests are deterministic. No real incident identities are published. The three production repositories remain unchanged.
+
+Reproduce from `prototype/` with the local Vite server running:
+
+```sh
+npm test
+npm run build
+node tests/dropdowns-flat-form.mjs
+node tests/required-fields.mjs
+node tests/intake-additions.mjs
+node tests/intake-assistance.mjs
+node tests/reporter-journey.mjs
+node tests/reviewer-corrections.mjs
+node tests/reports-ux.mjs
+node tests/output-completeness.mjs
+node tests/role-access.mjs
+node src/pages/operations/reportRequirements.browser.mjs
+node tests/browser.mjs
+```
+
+Set `CHROME_PATH` for system Chrome. Workflow browser outputs remain in ignored `test-artifacts/`.
+
+## Earlier field-policy verification
+
 
 Verified on 6 November 2026 against the current Vue/Quasar mockup and fictional records.
 

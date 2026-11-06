@@ -6,7 +6,7 @@ const browser=await chromium.launch({headless:true,executablePath:process.env.CH
 const page=await browser.newPage({viewport:{width:1440,height:1000}})
 const errors=[];page.on('pageerror',error=>errors.push(error.message))
 const field=label=>page.locator('.q-field').filter({has:page.locator('.q-field__label').filter({hasText:new RegExp('^'+label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$')})})
-const fill=(label,value)=>field(label).locator('input:visible,textarea:visible').first().fill(value)
+const fill=async(label,value)=>{const target=field(label),input=target.locator('input:visible,textarea:visible').first();await input.fill(value);if(await target.evaluate(el=>el.classList.contains('q-select'))){await input.press('Enter');await page.keyboard.press('Escape')}}
 const step=async name=>{await page.locator('.q-stepper__tab').filter({hasText:name}).click();await page.waitForTimeout(350)}
 try{
  await page.goto(base,{waitUntil:'networkidle'})
@@ -17,9 +17,7 @@ try{
  await fill('Date of Incident / Accident *','2026-11-05');await fill('Location of Incident / Accident *','Fictional test harbor')
  await step('Vessel & Operator');await fill('Name of Ship/Vessel *','MV Fictional Test')
  await step('Voyage & Cargo');await fill('Port of Departure','Fictional origin');await fill('Type of Cargo','General cargo')
- await field('Number of Crew *').locator('..').getByRole('checkbox',{name:'Unknown',exact:true}).uncheck()
  await fill('Number of Crew *','0')
- await field('Number of Passengers *').locator('..').getByRole('checkbox',{name:'Unknown',exact:true}).uncheck()
  await fill('Number of Passengers *','3');await page.getByRole('button',{name:'Use calculated total',exact:true}).click()
  await step('Narrative & Timeline')
  await fill('Narrative of Events Leading to the Accident *','Fictional account, original intake retained with MAIC additions.')

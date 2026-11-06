@@ -6,7 +6,7 @@ const browser=await chromium.launch({headless:true,executablePath:process.env.CH
 const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],requests=[]
 page.on('pageerror',error=>errors.push(error.message))
 const field=label=>page.locator('.q-field').filter({has:page.locator('.q-field__label').filter({hasText:new RegExp('^'+label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$')})})
-const fill=(label,value)=>field(label).locator('input:visible,textarea:visible').first().fill(value)
+const fill=async(label,value)=>{const target=field(label),input=target.locator('input:visible,textarea:visible').first();await input.fill(value);if(await target.evaluate(el=>el.classList.contains('q-select'))){await input.press('Enter');await page.keyboard.press('Escape')}}
 const step=async label=>{await page.locator('.q-stepper__tab').filter({hasText:label}).click();await page.waitForTimeout(350)}
 const state=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('saferseas-marina-vue-demo-v1')))
 await page.route('https://**.open-meteo.com/**',async route=>{
@@ -21,7 +21,7 @@ try{
  await step('Voyage & Cargo');assert.equal(await page.getByRole('button',{name:'Look up conditions',exact:true}).isDisabled(),true)
  assert.equal(requests.length,0,'unknown occurrence must not fetch model conditions')
  await step('Time & Location');await fill('Date of Incident / Accident *','2026-11-05')
- await field('Time of Incident / Accident (PHT, UTC+08:00) *').locator('..').getByRole('checkbox',{name:'Time unknown',exact:true}).uncheck()
+ await page.getByRole('checkbox',{name:'Time unknown',exact:true}).uncheck()
  await fill('Time of Incident / Accident (PHT, UTC+08:00) *','08:30')
  await page.getByRole('button',{name:'Select Location on Map',exact:true}).click()
  await page.locator('.map-canvas').waitFor();assert.equal(await page.getByRole('button',{name:'Apply Coordinates',exact:true}).isDisabled(),true)
@@ -37,7 +37,7 @@ try{
  await page.getByRole('button',{name:'Apply suggestions to blank fields',exact:true}).click()
  assert.equal(await field('Wave Height (m) *').locator('input').inputValue(),'0','model wave must not overwrite manual calm value')
  assert.equal(await field('Wind Force (Beaufort Scale) *').locator('input').inputValue(),'0','model zero must remain a real value')
- assert.equal(await field('Source of Environmental Information *').locator('input').inputValue(),'Master eyewitness statement')
+ assert.match(await field('Source of Environmental Information *').innerText(),/Master eyewitness statement/)
  assert.equal(requests.length,2);assert.ok(requests.every(url=>new URL(url).searchParams.get('timezone')==='Asia/Manila'))
  await page.screenshot({path:'test-artifacts/intake-weather.png',fullPage:true})
  await step('Attachments');await page.locator('input[type=file]').setInputFiles([{name:'fictional-photo-a.jpg',mimeType:'image/jpeg',buffer:Buffer.from('sample-a')},{name:'fictional-photo-b.jpg',mimeType:'image/jpeg',buffer:Buffer.from('sample-b')},{name:'fictional-statement.pdf',mimeType:'application/pdf',buffer:Buffer.from('sample-c')}])

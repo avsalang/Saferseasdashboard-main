@@ -12,6 +12,8 @@ Read the [usability rework](USABILITY_REWORK.md) for the current navigation, tas
 
 **Current field policy:** [MARINA field standards and requirements](FIELD_STANDARDS_AND_REQUIREMENTS.md) defines recognizable labels, submission/validation/issue requirements, explicit unknown handling and incomplete-working-copy exports. It supersedes earlier wording that all optional or unknown information could be left silently blank.
 
+**Dropdowns and visible sections:** The [MARINA dropdown source crosswalk](DROPDOWN_SOURCE_CROSSWALK.md) records workbook cells and MAIC choices. The same catalogue feeds reporting, vessel editors, investigation fields, filters and aggregate grouping. All content sections stay open. Required fields carry an asterisk; unknown / not-applicable declarations and their reasons sit beside the relevant field. The former separate Required Reporting Information panel is removed. Open reference fields preserve typed values when leaving the field or pressing Enter. This supersedes earlier accordion and collapsed-navigation descriptions.
+
 ## Start and review
 
 Use Node 22 or newer. From `prototype/`:

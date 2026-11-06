@@ -66,3 +66,13 @@ test('export metadata marks working copies and stops repeating superseded unknow
  assert.equal(metadata['Reporting Completeness'],'INCOMPLETE WORKING COPY')
  assert.equal(metadata['Unresolved Required Fields'],1)
 })
+
+test('source N/A size classification accepts a reasoned not-applicable declaration',()=>{
+ const event={...blankEvent(),vessels:[{id:'v',name:'Fictional Ship',sizeClass:'N/A'}],reportingExceptions:{'vessel:v:sizeClass':{status:'not_applicable',reason:'Source lists size classification as N/A.'}}}
+ const size=assessIncident(event).items.find(item=>item.key==='vessel:v:sizeClass')
+ assert.equal(size.status,'explained');assert.equal(event.vessels[0].sizeClass,'N/A')
+})
+test('case office requirement falls back to known homeport for no applicable CPC',()=>{
+ for(const cpc of ['N/A','NONE']){const event={...blankEvent(),cpc,homeport:'MRO-IV'};assert.equal(assessIncident(event,{hasCases:true}).items.find(item=>item.key==='caseOffice').value,'MRO-IV')}
+ for(const cpc of ['Foreign Flag','Unregistered']){const event={...blankEvent(),cpc,homeport:'MRO-IV'};assert.equal(assessIncident(event,{hasCases:true}).items.find(item=>item.key==='caseOffice').value,cpc)}
+})

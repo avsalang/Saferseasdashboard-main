@@ -40,7 +40,7 @@ The mockup's occurrence date/time use Philippine time (UTC+08:00), stated on the
 
 ## Implementation contract
 
-`src/data/reportingRequirements.js` holds the incident and output-dimension rules; `src/pages/operations/reportRequirements.js` holds MAIC and conditional case rules. The UI, submission/validation checks and output quality assessment use these definitions. `RequiredInformation.vue` gathers explicit exceptions. Implement equivalent server-side enforcement in production.
+`src/data/reportingRequirements.js` holds the incident and output-dimension rules; `src/pages/operations/reportRequirements.js` holds MAIC and conditional case rules. The UI, submission/validation checks and output quality assessment use these definitions. `FieldException.vue` records explicit exceptions beside the relevant input; the former central requirements component is removed. `StaticSection.vue` keeps section content visible. Required marks remain at each field. The [dropdown source crosswalk](DROPDOWN_SOURCE_CROSSWALK.md) records the exact source choices and permitted open reference fields. Implement equivalent server-side enforcement in production.
 
 Exceptions persist as `reportingExceptions[key] = { status: 'unknown' | 'not_applicable', reason }`. Involved vessels have stable `reportingKey` identifiers so explanations cannot transfer when vessels are reordered or removed. Report/case exceptions belong to their own records. Frozen issued content and retained output snapshots are not backfilled from later incident changes. Receipt metadata is separate from frozen document content.
 
@@ -96,7 +96,7 @@ The following table is generated from the shared requirement definitions. All en
 | vessels[].homeport | Homeport Office | Incident submission | Annual Master List; Homeport Matrix | Unknown, with reason |
 | vessels[].cpc | CPC Issuing Office | Incident submission | Annual Master List; SCO Summary | Unknown or Not Applicable, with reason |
 | vessels[].hull | Hull Material | Incident submission | Annual Master List; Hull / Size / Classification Matrices | Unknown, with reason |
-| vessels[].sizeClass | Size Classification | Incident submission | Annual Master List; Hull / Size / Classification Matrices | Unknown, with reason |
+| vessels[].sizeClass | Size Classification | Incident submission | Annual Master List; Hull / Size / Classification Matrices | Unknown or Not Applicable, with reason |
 | vessels[].classificationSociety | Classification Society | Incident submission | Annual Master List; Hull / Size / Classification Matrices | Unknown or Not Applicable, with reason |
 | vessels[].identification | Official Number / IMO Number | Incident submission | Annual Master List; Spot Report; MAIC Form 1B; MAIC Form 2; MAIC Form 3B | Unknown, with reason |
 

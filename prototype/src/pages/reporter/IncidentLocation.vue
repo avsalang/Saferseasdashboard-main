@@ -6,11 +6,13 @@ import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerRetina from 'leaflet/dist/images/marker-icon-2x.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 import {isBlankValue,validIncidentPosition} from '../../data/incidentWeather.js'
-const props=defineProps({model:{type:Object,required:true}})
+const props=defineProps({model:{type:Object,required:true},assessment:Object,exceptions:{type:Object,default:()=>({})},referenceValues:{type:Object,default:()=>({})}})
 watch(()=>props.model,model=>{for(const [key,value] of Object.entries({lat:null,lon:null,positionQuality:'unknown',province:'',region:'',nearestPorts:''}))if(model[key]===undefined)model[key]=value},{immediate:true})
 const mapOpen=ref(false),mapElement=ref(null),draftLat=ref(null),draftLon=ref(null),mapError=ref('')
 let map=null,marker=null,resizeTimer=null
 const hasDraft=computed(()=>validIncidentPosition(draftLat.value,draftLon.value))
+const geographyKeys={region:['region','regions'],province:['province','provinces'],nearestPorts:['nearestPorts','ports']}
+function geographyOptions(field){return [...new Set((geographyKeys[field]||[field]).flatMap(key=>props.referenceValues[key]||[]).map(value=>typeof value==='object'?(value.label??value.name??value.value):value).filter(value=>typeof value==='string'&&value.trim()))]}
 const qualityOptions=[{label:'Reported position',value:'reported'},{label:'Approximate position',value:'approximate'},{label:'Unknown / unlocated',value:'unknown'}]
 const coordinateRule=(value,limit)=>isBlankValue(value)||(Number.isFinite(Number(value))&&Math.abs(Number(value))<=limit)||`Enter a number between −${limit} and ${limit}, or leave blank.`
 const coordinateIssue=computed(()=>{const {lat,lon}=props.model;if(isBlankValue(lat)&&isBlankValue(lon))return '';return validIncidentPosition(lat,lon)?'':'Enter both valid coordinates, or leave both blank.'})
@@ -27,7 +29,18 @@ onBeforeUnmount(destroyMap)
 </script>
 <template><section class="incident-location">
  <div class="row items-center q-mb-md"><div class="col"><div class="section-label">Location details</div><div class="text-caption text-blue-grey-6">Enter the reported location. Office jurisdiction is selected separately.</div></div><q-btn outline color="primary" no-caps icon="pin_drop" label="Select Location on Map" @click="openPicker"/></div>
- <div class="form-grid"><q-select v-model="model.positionQuality" :options="qualityOptions" emit-value map-options outlined dense class="span-2" label="Position Quality *" hint="Use the map or enter coordinates; explain an unlocated incident in Required Reporting Information."/><q-input v-model.number="model.lat" @update:model-value="enteredCoordinates" outlined dense type="number" step="any" label="Latitude (decimal degrees) *" :rules="[value=>coordinateRule(value,90)]" hint="Blank means unknown; zero is valid."/><q-input v-model.number="model.lon" @update:model-value="enteredCoordinates" outlined dense type="number" step="any" label="Longitude (decimal degrees) *" :rules="[value=>coordinateRule(value,180)]" hint="Choose reported or approximate when a position is known."/><q-input v-model="model.region" outlined dense label="Region"/><q-input v-model="model.province" outlined dense label="Province"/><q-input v-model="model.nearestPorts" outlined dense class="span-2" label="Nearest Port(s)" hint="Enter reported port names; no port or region is inferred from the map."/></div>
+ <div class="form-grid">
+  <MarinaSelect v-model="model.positionQuality" :options="qualityOptions" :allow-other="false" emit-value map-options dense class="span-2" label="Position Quality *" hint="Use the map or enter coordinates; explain an unlocated incident below."/>
+  <q-input v-model.number="model.lat" @update:model-value="enteredCoordinates" outlined dense type="number" step="any" label="Latitude (decimal degrees) *" :rules="[value=>coordinateRule(value,90)]" hint="Blank means unknown; zero is valid."/>
+  <q-input v-model.number="model.lon" @update:model-value="enteredCoordinates" outlined dense type="number" step="any" label="Longitude (decimal degrees) *" :rules="[value=>coordinateRule(value,180)]" hint="Choose reported or approximate when a position is known."/>
+  <FieldException v-if="assessment" class="span-2" :assessment="assessment" :exceptions="exceptions" field-key="position"/>
+  <MarinaSelect v-if="geographyOptions('region').length" v-model="model.region" :options="geographyOptions('region')" allow-other dense label="Region"/>
+  <q-input v-else v-model="model.region" outlined dense label="Region"/>
+  <MarinaSelect v-if="geographyOptions('province').length" v-model="model.province" :options="geographyOptions('province')" allow-other dense label="Province"/>
+  <q-input v-else v-model="model.province" outlined dense label="Province"/>
+  <MarinaSelect v-if="geographyOptions('nearestPorts').length" v-model="model.nearestPorts" :options="geographyOptions('nearestPorts')" allow-other dense class="span-2" label="Nearest Port(s)" hint="Reported port names; no port or region is inferred from the map."/>
+  <q-input v-else v-model="model.nearestPorts" outlined dense class="span-2" label="Nearest Port(s)" hint="Enter reported port names; no port or region is inferred from the map."/>
+ </div>
  <q-banner v-if="coordinateIssue" dense class="bg-orange-1 text-dark q-mt-sm" role="alert">{{coordinateIssue}}</q-banner>
  <q-dialog v-model="mapOpen" backdrop-filter="blur(4px)" @show="initializeMap" @hide="destroyMap"><q-card class="location-dialog"><q-card-section class="row items-center text-white q-py-md map-heading"><div class="text-subtitle1 text-weight-bold"><q-icon name="pin_drop" class="q-mr-sm"/>Select Location on Map</div><q-space/><q-btn flat round icon="close" color="white" v-close-popup aria-label="Close map picker"/></q-card-section>
  <q-card-section class="q-pa-none map-canvas-section"><div ref="mapElement" class="map-canvas" aria-label="Incident location map"/><div class="coordinates-floating-badge"><strong>Selected:</strong> Lat {{isBlankValue(draftLat)?'—':draftLat}}, Long {{isBlankValue(draftLon)?'—':draftLon}}</div></q-card-section>

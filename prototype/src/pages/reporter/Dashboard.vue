@@ -40,7 +40,7 @@
       </q-card></div>
     </div>
     <div class="q-mb-lg"><RecentIncidents year="all" compact /></div>
-    <q-expansion-item v-model="chartsOpen" class="flat-card q-mb-lg" icon="query_stats" label="Reporting overview and charts" caption="Explore counts and trends for a reporting year" header-class="q-pa-lg">
+    <StaticSection v-model="chartsOpen" class="flat-card q-mb-lg" icon="query_stats" label="Reporting overview and charts" caption="Explore counts and trends for a reporting year" header-class="q-pa-lg">
       <div v-if="chartsOpen" class="q-pa-lg">    <div class="row q-col-gutter-xl">
       <div class="col-12">
         <!-- High-Level Stats Cards -->
@@ -77,7 +77,7 @@
         </div>
       </div>
     </div></div>
-    </q-expansion-item>
+    </StaticSection>
   </q-page>
 </template>
 

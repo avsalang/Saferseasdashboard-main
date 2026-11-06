@@ -1,3 +1,6 @@
+import StaticSection from './components/StaticSection.vue';
+import FieldException from './components/FieldException.vue';
+import MarinaSelect from './components/MarinaSelect.vue';
 import {createApp} from 'vue';
 import {Quasar,Dialog,Notify,Dark} from 'quasar';
 import '@quasar/extras/material-icons/material-icons.css';
@@ -7,4 +10,4 @@ import './styles/saferseas-existing.scss';
 import './styles/saferseas-adapter.css';
 import App from './App.vue';
 import router from './router.js';
-const app=createApp(App);app.use(Quasar,{plugins:{Dialog,Notify,Dark},config:{brand:{primary:'#1A365D',secondary:'#2B6CB0',accent:'#2A4365',positive:'#168463',negative:'#bc4b58',warning:'#ac7b20',info:'#2b6cb0'},notify:{position:'top-right',timeout:2600}}});app.use(router);app.mount('#app');
+const app=createApp(App);app.use(Quasar,{plugins:{Dialog,Notify,Dark},config:{brand:{primary:'#1A365D',secondary:'#2B6CB0',accent:'#2A4365',positive:'#168463',negative:'#bc4b58',warning:'#ac7b20',info:'#2b6cb0'},notify:{position:'top-right',timeout:2600}}});app.component('StaticSection',StaticSection);app.component('FieldException',FieldException);app.component('MarinaSelect',MarinaSelect);app.use(router);app.mount('#app');
