@@ -15,8 +15,10 @@
 - [x] Apply recognizable incident/vessel/condition/office labels, required marks and section guidance; prevent incomplete submission/validation while preserving drafts.
 - [x] Apply per-stage MAIC and conditional case/action requirements; preserve historical issued revisions.
 - [x] Display output completeness and retain outstanding items/explanations in output snapshots.
-- [ ] Verify unit/browser journeys, independent review, developer matrix and build; publish to the authorized GitHub Pages repository and verify the live result.
+- [x] Verify unit/browser journeys, independent review, developer matrix and build; publish to the authorized GitHub Pages repository and verify the live result.
 
 ## Review focus
 
 Confirmed zero, exact decimal GT, incomplete initial intelligence, ships without an IMO number, no case/pollution/propulsion, unseen defaults, removal/reordering of multiple vessels, changing facts after explaining an unknown, existing issued reports, empty output populations, source-specific seriousness codes and unchanged historical snapshots.
+
+Completed: source `7e59807`, Pages run `42176086227` successful; 89 unit tests, hosted required-field and working-copy flows, and 14 hosted MAIC/case/receipt checks passed. See `prototype/docs/VERIFICATION.md`.

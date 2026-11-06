@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-06",
+  "applicationSourceCommit": "7e598076b564f3db639464a11f327226b71572c4",
+  "initialFieldPolicyCommit": "30e64b8323796b1863b902c62c9e059ec7a2126e",
+  "workflowRun": 42176086227,
+  "workflowConclusion": "success",
+  "site": "https://avsalang.github.io/Saferseasdashboard-main/",
+  "unitTests": 89,
+  "routeChecks": 55,
+  "roleChecks": 23,
+  "reportUsabilityChecks": 22,
+  "reporterCorrectionChecks": 18,
+  "reviewerCorrectionChecks": 18,
+  "hostedChecks": {
+    "requiredFields": "passed",
+    "allFourWorkingCopyExportEntryPoints": "passed",
+    "maicCaseReceiptWorkflow": {
+      "passed": 14,
+      "errors": []
+    },
+    "initialInformationReceiptInGeneratedSpotReport": "passed"
+  },
+  "independentReview": "No remaining blocker after bounded recheck, including stale exception retirement and issued-document receipt boundary",
+  "productionRepositoriesModified": false
+}

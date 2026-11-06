@@ -19,6 +19,12 @@ Verified on 6 November 2026 against the current Vue/Quasar mockup and fictional 
 
 The new browser scripts are `tests/required-fields.mjs`, `tests/output-completeness.mjs` and `src/pages/operations/reportRequirements.browser.mjs`. They use fictional local browser state. The new requirements unit tests are included in `npm test`.
 
+## Published field-policy release
+
+Published application source: [`7e59807`](https://github.com/avsalang/Saferseasdashboard-main/commit/7e598076b564f3db639464a11f327226b71572c4). [GitHub build and Pages deployment](https://github.com/avsalang/Saferseasdashboard-main/actions/runs/42176086227) succeeded. All three new hosted journeys passed: required incident information, consistent incomplete-working-copy exports, and 14 MAIC/case/receipt checks. The generated spot report was separately checked for its initial-information receipt date. [Recorded acceptance](field-standards-live-acceptance.json).
+
+The three production repositories remain unchanged. Only the dedicated mockup and developer handoff were updated.
+
 ## Previous intake release evidence
 
 
